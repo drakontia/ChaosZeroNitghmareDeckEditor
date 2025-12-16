@@ -126,7 +126,7 @@ export function DeckDisplay({ cards, egoLevel, hasPotential, onRemoveCard, onUpd
                   >
                     {card.godHiramekiType 
                       ? `✦ 神: ${GOD_HIRAMEKI_EFFECTS[card.godHiramekiType].name}`
-                      : "{t("card.godSelect")}"}
+                      : t("card.godSelect")}
                   </button>
                 </div>
               )}
