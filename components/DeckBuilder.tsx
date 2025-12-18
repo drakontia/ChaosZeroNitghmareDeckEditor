@@ -8,35 +8,39 @@ import { CardSelector } from "./CardSelector";
 import { DeckDisplay } from "./DeckDisplay";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { CHARACTERS, EQUIPMENT } from "@/lib/data";
-import { getCardInfo, calculateVagueMemory } from "@/types";
+import { calculateFaintMemory } from "@/lib/deck-utils";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { Button } from "./ui/button";
+import { Field, FieldLabel, FieldGroup, FieldSet, FieldSeparator } from "./ui/field";
+import { Input } from './ui/input';
 
 export function DeckBuilder() {
   const t = useTranslations();
   const locale = useLocale();
-  
+
   const {
     deck,
     selectCharacter,
     selectEquipment,
     addCard,
     removeCard,
+    restoreCard,
+    undoCard,
+    copyCard,
+    convertCard,
     updateCardHirameki,
     setCardGodHirameki,
     clearDeck,
+    setName,
     setEgoLevel,
     togglePotential
   } = useDeckBuilder();
 
-  const totalCost = deck.cards.reduce((sum, card) => {
-    const info = getCardInfo(card, deck.egoLevel, deck.hasPotential);
-    return sum + info.cost;
-  }, 0);
-
-  const vagueMemoryPoints = calculateVagueMemory(deck);
+  const faintMemoryPoints = calculateFaintMemory(deck);
 
   return (
     <div className="min-h-screen p-4 md:p-8 bg-gray-50 dark:bg-gray-900">
-      <div className="max-w-[1600px] mx-auto">
+      <div className="max-w-400 mx-auto">
         <header className="mb-6">
           <div className="flex justify-between items-start mb-2">
             <div>
@@ -51,131 +55,152 @@ export function DeckBuilder() {
           </div>
         </header>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <FieldSet className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6 p-6 rounded-xl border bg-card">
+          {/* Top side - Deck name, Deck control */}
+          <FieldGroup className="lg:col-span-12 grid grid-cols-1 lg:grid-cols-12 gap-4">
+            <Field orientation={'horizontal'} className="lg:col-span-4">
+              <Input
+                type="text"
+                value={deck.name}
+                onChange={(e) => setName(e.target.value)}
+                className="w-full p-3 rounded-lg border border-border bg-background text-foreground"
+                placeholder={t('deck.namePlaceholder')}
+              />
+            </Field>
+            <div className="lg:col-span-8 flex justify-end">
+              <Button
+                onClick={clearDeck}
+                variant="destructive"
+              >
+                {t('deck.clear')}
+              </Button>
+            </div>
+          </FieldGroup>
+
           {/* Left side - Character, Points, Equipment */}
           <div className="lg:col-span-4 space-y-6">
             {/* Character Selection */}
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
-              <CharacterSelector
-                characters={CHARACTERS}
-                selectedCharacter={deck.character}
-                onSelect={selectCharacter}
-              />
-              
-              {/* Character Info Section */}
-              {deck.character && (
-                <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-                  <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                    {t('character.job')}: <span className="font-semibold">{t(`job.${deck.character.job}`)}</span>
-                  </div>
-                  
-                  {/* Vague Memory Points */}
-                  <div className="p-3 bg-purple-50 dark:bg-purple-900 rounded-lg">
-                    <div className="text-sm font-semibold text-purple-700 dark:text-purple-300">
-                      {t('character.vagueMemory')}
-                    </div>
-                    <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
-                      {vagueMemoryPoints} pt
-                    </div>
-                  </div>
+            <Card>
+              <CardContent className="p-6">
+                <CharacterSelector
+                  characters={CHARACTERS}
+                  selectedCharacter={deck.character}
+                  onSelect={selectCharacter}
+                />
 
-                  {/* Ego Level Control */}
-                  <div className="mt-3">
-                    <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">
-                      {t('character.egoManifest')}: {t('card.level')} {deck.egoLevel}
-                    </label>
-                    <input
-                      type="range"
-                      min="0"
-                      max="6"
-                      value={deck.egoLevel}
-                      onChange={(e) => setEgoLevel(Number(e.target.value))}
-                      className="w-full mt-1"
-                    />
-                  </div>
+                {/* Character Info Section */}
+                {deck.character && (
+                  <div className="mt-4 pt-4 border-t border-border space-y-4">
+                    <div className="text-sm text-muted-foreground">
+                      {t('character.job')}: <span className="font-semibold text-foreground">{t(`job.${deck.character.job}`)}</span>
+                    </div>
 
-                  {/* Potential Toggle */}
-                  <div className="mt-3">
-                    <label className="flex items-center cursor-pointer">
+                    <Field>
+                      <FieldLabel>{t('character.egoManifest')} ({t('card.level')} {deck.egoLevel})</FieldLabel>
                       <input
-                        type="checkbox"
-                        checked={deck.hasPotential}
-                        onChange={togglePotential}
-                        className="mr-2"
+                        type="range"
+                        min="0"
+                        max="6"
+                        value={deck.egoLevel}
+                        onChange={(e) => setEgoLevel(Number(e.target.value))}
+                        className="w-full"
                       />
-                      <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
-                        {t('character.potential')}
-                      </span>
-                    </label>
+                    </Field>
+
+                    <Field>
+                      <FieldLabel>{t('character.potential')}</FieldLabel>
+                      <label className="inline-flex items-center gap-2">
+                        <Input
+                          type="checkbox"
+                          checked={deck.hasPotential}
+                          onChange={togglePotential}
+                          className="h-4 w-4"
+                        />
+                        <span className="text-sm text-foreground">{t('character.potential')}</span>
+                      </label>
+                    </Field>
                   </div>
-                </div>
-              )}
-            </div>
-
-            {/* Points/Stats Section */}
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
-              <h2 className="text-xl font-bold mb-4">{t('deck.title')}</h2>
-              <div className="space-y-3">
-                <div className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-700 rounded">
-                  <span className="font-semibold">{t('deck.totalCards')}</span>
-                  <span className="text-xl font-bold text-blue-600 dark:text-blue-400">
-                    {deck.cards.length}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-700 rounded">
-                  <span className="font-semibold">{t('deck.totalCost')}</span>
-                  <span className="text-xl font-bold text-purple-600 dark:text-purple-400">
-                    {totalCost}
-                  </span>
-                </div>
-              </div>
-              <div className="mt-4">
-                <button
-                  onClick={clearDeck}
-                  className="w-full px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-all"
-                >
-                  {t('deck.clear')}
-                </button>
-              </div>
-            </div>
-
-            {/* Equipment Section */}
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
+                )}
+              </CardContent>
+              {/* Points/Stats Section */}
+              <CardContent className="space-y-4">
+                <Field orientation={'horizontal'}>
+                  <FieldLabel>{t('deck.createdDate')}</FieldLabel>
+                  <div className="flex justify-between items-center p-3">
+                    <span className="text-base font-bold text-foreground">
+                      {(() => {
+                        const d = new Date(deck.createdAt);
+                        const yy = String(d.getFullYear()).slice(-2);
+                        const mm = String(d.getMonth() + 1).padStart(2, '0');
+                        const dd = String(d.getDate()).padStart(2, '0');
+                        return `${yy}.${mm}.${dd}`;
+                      })()}
+                    </span>
+                  </div>
+                </Field>
+                <Field orientation={'horizontal'}>
+                  <FieldLabel>{t('character.faintMemory')}</FieldLabel>
+                  <div className="flex justify-between items-center p-3">
+                    <span className="text-base font-bold text-primary">{faintMemoryPoints} pt</span>
+                  </div>
+                </Field>
+                <Field orientation={'horizontal'}>
+                  <FieldLabel>{t('deck.totalCards')}</FieldLabel>
+                  <div className="flex justify-between items-center p-3">
+                    <span className="text-base font-bold text-primary">{deck.cards.length}</span>
+                  </div>
+                </Field>
+              </CardContent>
               <EquipmentSelector
                 equipment={EQUIPMENT}
                 selectedEquipment={deck.equipment}
                 onSelect={selectEquipment}
               />
-            </div>
+
+            </Card>
+
+
+            {/* Equipment Section */}
           </div>
 
           {/* Right side - Cards in 4-column grid */}
-          <div className="lg:col-span-8">
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-2xl font-bold">{t('card.title')}</h2>
-                <div className="text-sm text-gray-600 dark:text-gray-400">
-                  {deck.cards.length} / 40
-                </div>
-              </div>
-              
-              <DeckDisplay
-                cards={deck.cards}
-                egoLevel={deck.egoLevel}
-                hasPotential={deck.hasPotential}
-                onRemoveCard={removeCard}
-                onUpdateHirameki={updateCardHirameki}
-                onSetGodHirameki={setCardGodHirameki}
-              />
+          <div className="lg:col-span-8 space-y-6">
+            <Card>
+              <CardContent className="p-6">
+                <DeckDisplay
+                  cards={deck.cards}
+                  egoLevel={deck.egoLevel}
+                  hasPotential={deck.hasPotential}
+                  onRemoveCard={removeCard}
+                  onUndoCard={undoCard}
+                  onCopyCard={copyCard}
+                  onConvertCard={convertCard}
+                  onUpdateHirameki={updateCardHirameki}
+                  onSetGodHirameki={setCardGodHirameki}
+                />
 
-              {/* Card Selection for adding cards */}
-              <div className="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700">
+              </CardContent>
+            </Card>
+          </div>
+        </FieldSet>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <div className="lg:col-span-12">
+            <Card>
+              <CardHeader>
+                <CardTitle>{t('card.add')}</CardTitle>
+              </CardHeader>
+              <CardContent className="p-6">
+                {/* Card Selection for adding cards */}
                 <CardSelector
                   character={deck.character}
                   onAddCard={addCard}
+                  onRestoreCard={restoreCard}
+                  removedCards={deck.removedCards}
+                  convertedCards={deck.convertedCards}
                 />
-              </div>
-            </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </div>
