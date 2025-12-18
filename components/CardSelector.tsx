@@ -157,6 +157,12 @@ export function CardSelector({ character, onAddCard, onRestoreCard, removedCards
   return (
     <UiCard>
       <CardContent className="space-y-6">
+        {!character && characterHiramekiCards.length === 0 && (
+          <div className="text-sm text-muted-foreground text-center p-4">
+            {t("character.select")}
+          </div>
+        )}
+        
         {/* Removed Cards */}
         {removedCards && removedCards.size > 0 && (
           <div className="space-y-3">
@@ -201,12 +207,6 @@ export function CardSelector({ character, onAddCard, onRestoreCard, removedCards
           {renderAccordionCardType(CardType.MONSTER, 'monster')}
           {renderAccordionCardType(CardType.FORBIDDEN, 'forbidden')}
         </Accordion>
-
-        {!character && characterHiramekiCards.length === 0 && (
-          <div className="text-sm text-muted-foreground text-center p-4">
-            {t("character.select")}
-          </div>
-        )}
       </CardContent>
     </UiCard>
   );
