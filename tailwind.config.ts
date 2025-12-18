@@ -6,5 +6,8 @@ const config: Config = {
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
+  plugins: [
+		require("tailwindcss-animate"),
+	],
 };
 export default config;

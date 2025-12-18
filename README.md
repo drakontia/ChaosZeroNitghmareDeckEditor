@@ -27,16 +27,16 @@
 
 ```bash
 # 依存関係のインストール
-npm install
+pnpm install
 
 # 開発サーバーの起動
-npm run dev
+pnpm dev
 
 # 本番ビルド
-npm run build
+pnpm build
 
 # E2Eテストの実行
-npm test
+pnpm test
 ```
 
 ## 使い方
