@@ -8,15 +8,45 @@
     "select": "Select Character",
     "job": "Job",
     "vagueMemory": "Vague Memory",
+    "faintMemory": "Faint Memory",
     "egoManifest": "Ego Manifestation",
-    "potential": "Potential"
+    "potential": "Potential",
+    "chizuru": "Lilith",
+    "alice": "Alice",
+    "victor": "Victor",
+    "emma": "Emma",
+    "kyle": "Kyle"
   },
   "equipment": {
     "title": "Equipment",
     "weapon": "Weapon",
     "armor": "Armor",
     "pendant": "Pendant",
-    "none": "None"
+    "none": "None",
+    "weapon": {
+      "excalibur": "Holy Sword Excalibur",
+      "excalibur.description": "A legendary holy sword",
+      "darkSword": "Dark Sword",
+      "darkSword.description": "A sword imbued with dark power",
+      "steelSword": "Steel Sword",
+      "steelSword.description": "A standard sword"
+    },
+    "armor": {
+      "holyArmor": "Holy Armor",
+      "holyArmor.description": "Armor blessed by the gods",
+      "magicArmor": "Magic Armor",
+      "magicArmor.description": "High magical defense",
+      "leatherArmor": "Leather Armor",
+      "leatherArmor.description": "Lightweight armor"
+    },
+    "pendant": {
+      "lifePendant": "Life Pendant",
+      "lifePendant.description": "Greatly increases HP",
+      "magicPendant": "Magic Pendant",
+      "magicPendant.description": "Increases magical power",
+      "luckyPendant": "Lucky Pendant",
+      "luckyPendant.description": "Slightly increases luck"
+    }
   },
   "card": {
     "title": "Cards",
@@ -38,12 +68,15 @@
     "clear": "Clear Deck",
     "totalCards": "Total Cards",
     "totalCost": "Total Cost",
-    "noDeck": "Deck is empty"
+    "noDeck": "Deck is empty",
+    "namePlaceholder": "Enter deck name",
+    "createdDate": "Created"
   },
   "rarity": {
     "SSR": "SSR",
     "SR": "SR",
-    "R": "R"
+    "R": "R",
+    "★5": "★5"
   },
   "job": {
     "striker": "Striker",
@@ -70,5 +103,8 @@
     "remove": "Remove",
     "select": "Select",
     "clear": "Clear"
+  },
+  "common": {
+    "open": "Open"
   }
 }

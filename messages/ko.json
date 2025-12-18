@@ -8,15 +8,45 @@
     "select": "캐릭터 선택",
     "job": "직업",
     "vagueMemory": "모호한 기억",
+    "faintMemory": "희미한 기억",
     "egoManifest": "에고 발현",
-    "potential": "잠재력"
+    "potential": "잠재력",
+    "chizuru": "릴리스",
+    "alice": "앨리스",
+    "victor": "빅터",
+    "emma": "엠마",
+    "kyle": "카일"
   },
   "equipment": {
     "title": "장비",
     "weapon": "무기",
     "armor": "방어구",
     "pendant": "펜던트",
-    "none": "없음"
+    "none": "없음",
+    "weapon": {
+      "excalibur": "성검 엑스칼리버",
+      "excalibur.description": "전설의 성검",
+      "darkSword": "다크 소드",
+      "darkSword.description": "어둠의 힘이 깃든 검",
+      "steelSword": "강철 검",
+      "steelSword.description": "표준적인 검"
+    },
+    "armor": {
+      "holyArmor": "신성한 갑옷",
+      "holyArmor.description": "신들의 가호를 받은 갑옷",
+      "magicArmor": "마법 갑옷",
+      "magicArmor.description": "마법 방어력이 높음",
+      "leatherArmor": "가죽 갑옷",
+      "leatherArmor.description": "가볍고 편한 갑옷"
+    },
+    "pendant": {
+      "lifePendant": "생명의 펜던트",
+      "lifePendant.description": "HP를 크게 증가",
+      "magicPendant": "마력의 펜던트",
+      "magicPendant.description": "마력을 증가",
+      "luckyPendant": "행운의 펜던트",
+      "luckyPendant.description": "운을 조금 증가"
+    }
   },
   "card": {
     "title": "카드",
@@ -38,12 +68,15 @@
     "clear": "덱 초기화",
     "totalCards": "총 카드 수",
     "totalCost": "총 비용",
-    "noDeck": "덱이 비어 있습니다"
+    "noDeck": "덱이 비어 있습니다",
+    "namePlaceholder": "덱 이름 입력",
+    "createdDate": "생성일"
   },
   "rarity": {
     "SSR": "SSR",
     "SR": "SR",
-    "R": "R"
+    "R": "R",
+    "★5": "★5"
   },
   "job": {
     "striker": "스트라이커",
@@ -70,5 +103,8 @@
     "remove": "제거",
     "select": "선택",
     "clear": "초기화"
+  },
+  "common": {
+    "open": "열기"
   }
 }

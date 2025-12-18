@@ -8,15 +8,45 @@
     "select": "选择角色",
     "job": "职业",
     "vagueMemory": "模糊记忆",
+    "faintMemory": "微弱记忆",
     "egoManifest": "自我显现",
-    "potential": "潜力"
+    "potential": "潜力",
+    "chizuru": "莉莉丝",
+    "alice": "爱丽丝",
+    "victor": "维克多",
+    "emma": "艾玛",
+    "kyle": "凯尔"
   },
   "equipment": {
     "title": "装备",
     "weapon": "武器",
     "armor": "防具",
     "pendant": "吊坠",
-    "none": "无"
+    "none": "无",
+    "weapon": {
+      "excalibur": "圣剑誓约胜利之剑",
+      "excalibur.description": "传说中的圣剑",
+      "darkSword": "黑暗之剑",
+      "darkSword.description": "蕴含黑暗力量的剑",
+      "steelSword": "钢铁之剑",
+      "steelSword.description": "标准的剑"
+    },
+    "armor": {
+      "holyArmor": "神圣铠甲",
+      "holyArmor.description": "受到诸神庇护的铠甲",
+      "magicArmor": "魔法铠甲",
+      "magicArmor.description": "魔法防御力很高",
+      "leatherArmor": "皮甲",
+      "leatherArmor.description": "轻便的铠甲"
+    },
+    "pendant": {
+      "lifePendant": "生命吊坠",
+      "lifePendant.description": "大幅增加HP",
+      "magicPendant": "魔力吊坠",
+      "magicPendant.description": "增加魔力",
+      "luckyPendant": "幸运吊坠",
+      "luckyPendant.description": "略微增加运气"
+    }
   },
   "card": {
     "title": "卡牌",
@@ -38,12 +68,15 @@
     "clear": "清空卡组",
     "totalCards": "卡牌总数",
     "totalCost": "总费用",
-    "noDeck": "卡组为空"
+    "noDeck": "卡组为空",
+    "namePlaceholder": "输入卡组名称",
+    "createdDate": "创建日期"
   },
   "rarity": {
     "SSR": "SSR",
     "SR": "SR",
-    "R": "R"
+    "R": "R",
+    "★5": "★5"
   },
   "job": {
     "striker": "前锋",
@@ -70,5 +103,8 @@
     "remove": "删除",
     "select": "选择",
     "clear": "清空"
+  },
+  "common": {
+    "open": "打开"
   }
 }
