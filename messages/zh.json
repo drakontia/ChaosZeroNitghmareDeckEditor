@@ -79,7 +79,8 @@
     "godHirameki": "神之灵感",
     "godSelect": "选择神之灵感",
     "god": "神",
-    "level": "等级"
+    "level": "等级",
+    "search": "搜索卡牌"
   },
   "deck": {
     "title": "卡组",

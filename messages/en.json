@@ -79,7 +79,8 @@
     "godHirameki": "God Hirameki",
     "godSelect": "Select God Hirameki",
     "god": "God",
-    "level": "Lv"
+    "level": "Lv",
+    "search": "Search cards"
   },
   "deck": {
     "title": "Deck",

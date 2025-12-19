@@ -15,10 +15,12 @@ import { Button } from "./ui/button";
 import { Field, FieldLabel, FieldGroup, FieldSet } from "./ui/field";
 import { Input } from './ui/input';
 import { Brain, CardSim, Clock12 } from 'lucide-react';
+import { useState } from 'react';
 
 export function DeckBuilder() {
   const t = useTranslations();
   const locale = useLocale();
+  const [searchQuery, setSearchQuery] = useState("");
 
   const {
     deck,
@@ -142,6 +144,7 @@ export function DeckBuilder() {
                   cards={deck.cards}
                   egoLevel={deck.egoLevel}
                   hasPotential={deck.hasPotential}
+                  allowedJob={deck.character?.job}
                   onRemoveCard={removeCard}
                   onUndoCard={undoCard}
                   onCopyCard={copyCard}
@@ -159,8 +162,15 @@ export function DeckBuilder() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           <div className="lg:col-span-12">
             <Card>
-              <CardHeader>
+              <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle>{t('card.add')}</CardTitle>
+                <Input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-64"
+                  placeholder={t('card.search')}
+                />
               </CardHeader>
               <CardContent className="p-6">
                 {/* Card Selection for adding cards */}
@@ -175,6 +185,7 @@ export function DeckBuilder() {
                       .filter(c => c.type === CardType.CHARACTER)
                       .map(c => c.id)
                   )}
+                  searchQuery={searchQuery}
                 />
               </CardContent>
             </Card>

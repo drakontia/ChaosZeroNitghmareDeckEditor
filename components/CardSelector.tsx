@@ -12,11 +12,12 @@ interface CardSelectorProps {
   onAddCard: (card: Card) => void;
   onRestoreCard: (card: Card) => void;
   removedCards?: Map<string, number>;
-  convertedCards?: Set<string>;
+  convertedCards?: Map<string, string>;
   presentHiramekiIds?: Set<string>;
+  searchQuery?: string;
 }
 
-export function CardSelector({ character, onAddCard, onRestoreCard, removedCards, convertedCards, presentHiramekiIds }: CardSelectorProps) {
+export function CardSelector({ character, onAddCard, onRestoreCard, removedCards, convertedCards, presentHiramekiIds, searchQuery }: CardSelectorProps) {
   const t = useTranslations();
   const characterHiramekiCards = character ? getCharacterHiramekiCards(character) : [];
   const addableCards = getAddableCards(character?.job);
@@ -29,7 +30,18 @@ export function CardSelector({ character, onAddCard, onRestoreCard, removedCards
   if (removedCards) {
     for (const id of removedCards.keys()) hiddenHiramekiIds.add(id);
   }
-  const visibleCharacterHiramekiCards = characterHiramekiCards.filter(card => !hiddenHiramekiIds.has(card.id));
+  const query = (searchQuery || '').toLowerCase().trim();
+  const matchesQuery = (card: Card) => {
+    if (!query) return true;
+    const name = t(`cards.${card.id}.name`, { defaultValue: card.name }).toLowerCase();
+    const baseDesc = t(`cards.${card.id}.descriptions.0`, { defaultValue: card.hiramekiVariations[0]?.description || '' }).toLowerCase();
+    const category = t(`category.${card.category}`).toLowerCase();
+    return name.includes(query) || baseDesc.includes(query) || category.includes(query);
+  };
+
+  const visibleCharacterHiramekiCards = characterHiramekiCards
+    .filter(card => !hiddenHiramekiIds.has(card.id))
+    .filter(matchesQuery);
 
   const getCardTypeLabel = (type: CardType) => {
     switch (type) {
@@ -117,7 +129,7 @@ export function CardSelector({ character, onAddCard, onRestoreCard, removedCards
 
   // Accordionアイテムを生成する共通関数
   const renderAccordionCardType = (cardType: CardType, value: string) => {
-    const filteredCards = addableCards.filter(c => c.type === cardType);
+    const filteredCards = addableCards.filter(c => c.type === cardType).filter(matchesQuery);
     if (filteredCards.length === 0) return null;
 
     return (
@@ -151,6 +163,7 @@ export function CardSelector({ character, onAddCard, onRestoreCard, removedCards
               {Array.from(removedCards.entries()).map(([id, count]) => {
                 const card = getCardById(id);
                 if (!card) return null;
+                if (!matchesQuery(card)) return null;
                 return renderRemovedTile(card, count);
               })}
             </div>
@@ -162,9 +175,10 @@ export function CardSelector({ character, onAddCard, onRestoreCard, removedCards
           <div className="space-y-3">
             <h3 className="text-lg font-semibold">変換したカード</h3>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-              {Array.from(convertedCards.values()).map((id) => {
-                const card = getCardById(id);
+              {Array.from(convertedCards.entries()).map(([originalId, convertedId]) => {
+                const card = getCardById(convertedId);
                 if (!card) return null;
+                if (!matchesQuery(card)) return null;
                 return renderConvertedTile(card);
               })}
             </div>

@@ -4,7 +4,7 @@ import { CardFrame } from './CardFrame';
 import { HiramekiControls } from './HiramekiControls';
 import { CardActionsMenu } from './CardActionsMenu';
 
-import { DeckCard, GodType } from "@/types";
+import { DeckCard, GodType, Card, JobType } from "@/types";
 import { Card as UiCard } from "./ui/card";
 import { getCardInfo } from "@/lib/deck-utils";
 import { GOD_HIRAMEKI_EFFECTS } from "@/lib/god-hirameki";
@@ -13,16 +13,17 @@ interface DeckDisplayProps {
   cards: DeckCard[];
   egoLevel: number;
   hasPotential: boolean;
+  allowedJob?: JobType;
   onRemoveCard: (deckId: string) => void;
   onUndoCard: (deckId: string) => void;
   onCopyCard: (deckId: string) => void;
-  onConvertCard: (deckId: string) => void;
+  onConvertCard: (deckId: string, targetCard: Card) => void;
   onUpdateHirameki: (deckId: string, hiramekiLevel: number) => void;
   onSetGodHirameki: (deckId: string, godType: GodType | null) => void;
   onSetGodHiramekiEffect: (deckId: string, effectId: string | null) => void;
 }
 
-export function DeckDisplay({ cards, egoLevel, hasPotential, onRemoveCard, onUndoCard, onCopyCard, onConvertCard, onUpdateHirameki, onSetGodHirameki, onSetGodHiramekiEffect }: DeckDisplayProps) {
+export function DeckDisplay({ cards, egoLevel, hasPotential, allowedJob, onRemoveCard, onUndoCard, onCopyCard, onConvertCard, onUpdateHirameki, onSetGodHirameki, onSetGodHiramekiEffect }: DeckDisplayProps) {
   const t = useTranslations();
 
   // name translation will be performed in CardFrame using ID
@@ -84,6 +85,7 @@ export function DeckDisplay({ cards, egoLevel, hasPotential, onRemoveCard, onUnd
               rightControls={
                 <CardActionsMenu
                   card={card}
+                  allowedJob={allowedJob}
                   onRemoveCard={onRemoveCard}
                   onCopyCard={onCopyCard}
                   onConvertCard={onConvertCard}

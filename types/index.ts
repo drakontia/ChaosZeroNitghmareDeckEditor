@@ -161,7 +161,7 @@ export interface Deck {
   // Tracking for Vague Memory calculation
   removedCards: Map<string, number>; // cardId -> removal count
   copiedCards: Map<string, number>; // cardId -> copy count
-  convertedCards: Set<string>; // cardIds that have been converted
+  convertedCards: Map<string, string>; // originalCardId -> convertedCardId mapping
 }
 
 

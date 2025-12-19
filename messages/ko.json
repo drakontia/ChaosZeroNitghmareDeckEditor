@@ -19,9 +19,6 @@
   },
   "equipment": {
     "title": "장비",
-    "weapon": "무기",
-    "armor": "방어구",
-    "pendant": "펜던트",
     "none": "없음",
     "weapon": {
       "excalibur": {
@@ -79,7 +76,8 @@
     "godHirameki": "신 히라메키",
     "godSelect": "신 히라메키 선택",
     "god": "신",
-    "level": "레벨"
+    "level": "레벨",
+    "search": "카드 검색"
   },
   "deck": {
     "title": "덱",

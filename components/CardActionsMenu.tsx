@@ -2,20 +2,23 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { CircleX, Undo2, Copy, ArrowRightLeft, Menu } from "lucide-react";
-import { DeckCard } from "@/types";
+import { DeckCard, Card, JobType } from "@/types";
+import { ConversionModal } from "./ConversionModal";
 
 const ACTION_BUTTON_CLASS = "flex items-center justify-center px-1 py-2 hover:bg-black/10";
 
 interface CardActionsMenuProps {
   card: DeckCard;
+  allowedJob?: JobType;
   onRemoveCard: (deckId: string) => void;
   onCopyCard: (deckId: string) => void;
-  onConvertCard: (deckId: string) => void;
+  onConvertCard: (deckId: string, targetCard: Card) => void;
   onUndoCard: (deckId: string) => void;
 }
 
 export function CardActionsMenu({ 
-  card, 
+  card,
+  allowedJob,
   onRemoveCard, 
   onCopyCard, 
   onConvertCard, 
@@ -23,6 +26,17 @@ export function CardActionsMenu({
 }: CardActionsMenuProps) {
   const t = useTranslations();
   const [isOpen, setIsOpen] = useState(false);
+  const [isConversionModalOpen, setIsConversionModalOpen] = useState(false);
+
+  const handleConvertClick = () => {
+    setIsOpen(false);
+    setIsConversionModalOpen(true);
+  };
+
+  const handleConversionSelect = (targetCard: Card) => {
+    onConvertCard(card.deckId, targetCard);
+    setIsConversionModalOpen(false);
+  };
 
   return (
     <>
@@ -60,7 +74,7 @@ export function CardActionsMenu({
           <button
             type="button"
             className={ACTION_BUTTON_CLASS}
-            onClick={() => { onConvertCard(card.deckId); setIsOpen(false); }}
+            onClick={handleConvertClick}
             aria-label={t("common.convert", { defaultValue: "変換" })}
             title={t("common.convert", { defaultValue: "変換" })}
           >
@@ -79,6 +93,12 @@ export function CardActionsMenu({
           )}
         </div>
       )}
+      <ConversionModal
+        isOpen={isConversionModalOpen}
+        onClose={() => setIsConversionModalOpen(false)}
+        onSelectCard={handleConversionSelect}
+        allowedJob={allowedJob}
+      />
     </>
   );
 }

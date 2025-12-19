@@ -17,7 +17,8 @@
     "godHirameki": "神ヒラメキ",
     "godSelect": "神ヒラメキ選択",
     "god": "神",
-    "level": "Lv"
+    "level": "Lv",
+    "search": "カード検索"
   },
   "deck": {
     "title": "デッキ",

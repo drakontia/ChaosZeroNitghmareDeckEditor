@@ -18,7 +18,7 @@ export function useDeckBuilder() {
     createdAt: new Date(),
     removedCards: new Map(),
     copiedCards: new Map(),
-    convertedCards: new Set()
+    convertedCards: new Map()
   });
 
   const selectCharacter = useCallback((character: Character) => {
@@ -109,6 +109,41 @@ export function useDeckBuilder() {
 
   const restoreCard = useCallback((card: Card) => {
     setDeck(prev => {
+      // Check if this card was converted from another card
+      const originalCardId = Array.from(prev.convertedCards.entries())
+        .find(([_, convertedId]) => convertedId === card.id)?.[0];
+
+      if (originalCardId) {
+        // This is a converted card being restored - remove the conversion and restore original
+        const newConvertedCards = new Map(prev.convertedCards);
+        newConvertedCards.delete(originalCardId);
+
+        // Find and replace the converted card with original in the deck
+        const convertedCardIndex = prev.cards.findIndex(c => c.id === card.id);
+        if (convertedCardIndex !== -1) {
+          const newCards = [...prev.cards];
+          const restoredCard: DeckCard = {
+            ...card,
+            deckId: `${card.id}_${Date.now()}_${Math.random()}`,
+            selectedHiramekiLevel: 0,
+            godHiramekiType: null,
+            godHiramekiEffectId: null
+          };
+          newCards[convertedCardIndex] = restoredCard;
+
+          return {
+            ...prev,
+            cards: newCards,
+            convertedCards: newConvertedCards
+          };
+        }
+
+        return {
+          ...prev,
+          convertedCards: newConvertedCards
+        };
+      }
+
       // For character cards, only restore once and remove from removedCards
       if (card.type === CardType.CHARACTER) {
         const newRemovedCards = new Map(prev.removedCards);
@@ -181,19 +216,34 @@ export function useDeckBuilder() {
     });
   }, []);
 
-  const convertCard = useCallback((deckId: string) => {
+  const convertCard = useCallback((deckId: string, targetCard: Card) => {
     setDeck(prev => {
       const cardToConvert = prev.cards.find(c => c.deckId === deckId);
       if (!cardToConvert) {
         return prev;
       }
 
-      const newConverted = new Set(prev.convertedCards);
-      newConverted.add(cardToConvert.id);
+      // Create new deck card from target card
+      const convertedCard: DeckCard = {
+        ...targetCard,
+        deckId: `${targetCard.id}_${Date.now()}_${Math.random()}`,
+        selectedHiramekiLevel: 0,
+        godHiramekiType: null,
+        godHiramekiEffectId: null
+      };
+
+      // Replace the original card with converted card at the same position
+      const cardIndex = prev.cards.findIndex(c => c.deckId === deckId);
+      const newCards = [...prev.cards];
+      newCards[cardIndex] = convertedCard;
+
+      // Track conversion mapping (originalCardId -> convertedCardId)
+      const newConverted = new Map(prev.convertedCards);
+      newConverted.set(cardToConvert.id, targetCard.id);
 
       return {
         ...prev,
-        cards: prev.cards.filter(c => c.deckId !== deckId),
+        cards: newCards,
         convertedCards: newConverted
       };
     });
@@ -246,7 +296,7 @@ export function useDeckBuilder() {
       createdAt: new Date(),
       removedCards: new Map(),
       copiedCards: new Map(),
-      convertedCards: new Set()
+      convertedCards: new Map()
     });
   }, []);
 

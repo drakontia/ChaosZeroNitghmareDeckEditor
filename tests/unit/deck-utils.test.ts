@@ -117,7 +117,7 @@ describe('calculateFaintMemory', () => {
       createdAt: new Date(),
       removedCards: new Map(),
       copiedCards: new Map(),
-      convertedCards: new Set()
+      convertedCards: new Map()
     };
   });
 
@@ -297,9 +297,9 @@ describe('calculateFaintMemory', () => {
   });
 
   it('should add 10pt for each converted card', () => {
-    baseDeck.convertedCards.add('card-1');
-    baseDeck.convertedCards.add('card-2');
-    baseDeck.convertedCards.add('card-3');
+    baseDeck.convertedCards.set('card-1', 'converted-1');
+    baseDeck.convertedCards.set('card-2', 'converted-2');
+    baseDeck.convertedCards.set('card-3', 'converted-3');
     
     expect(calculateFaintMemory(baseDeck)).toBe(30);
   });
@@ -331,7 +331,7 @@ describe('calculateFaintMemory', () => {
     baseDeck.removedCards.set('card-1', 2); // +10
 
     // Add converted card
-    baseDeck.convertedCards.add('card-2'); // +10
+    baseDeck.convertedCards.set('card-2', 'converted-2'); // +10
 
     expect(calculateFaintMemory(baseDeck)).toBe(70);
   });
