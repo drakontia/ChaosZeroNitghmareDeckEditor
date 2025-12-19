@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { getCardInfo, calculateFaintMemory } from '../lib/deck-utils';
+import { getCardInfo, calculateFaintMemory } from '../../lib/deck-utils';
 import { CardType, CardCategory, CardStatus, GodType, DeckCard, Deck, HiramekiVariation } from '@/types';
 
 describe('getCardInfo', () => {
