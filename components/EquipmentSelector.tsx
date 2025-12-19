@@ -6,8 +6,7 @@ import Image from 'next/image';
 import { Equipment, EquipmentType } from "@/types";
 import { Button } from "./ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
-import { Field, FieldGroup, FieldLabel, FieldSet } from "./ui/field";
-import { CardContent } from './ui/card';
+import { Field, FieldGroup, FieldLabel } from "./ui/field";
 import { Swords } from "lucide-react";
 
 interface EquipmentSelectorProps {

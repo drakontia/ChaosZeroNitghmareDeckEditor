@@ -1,10 +1,10 @@
 "use client";
 import { useTranslations } from 'next-intl';
-import Image from 'next/image';
 
 import { Card, CardType, Character } from "@/types";
 import { getCharacterHiramekiCards, getAddableCards, getCardById } from "@/lib/data";
 import { Card as UiCard, CardContent } from "./ui/card";
+import { CardFrame } from "./CardFrame";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "./ui/accordion";
 
 interface CardSelectorProps {
@@ -58,58 +58,22 @@ export function CardSelector({ character, onAddCard, onRestoreCard, removedCards
     const translatedName = t(`cards.${card.id}.name`, { defaultValue: card.name });
     const cardTitle = title || translatedName;
 
+    const statuses = baseVariation.statuses?.map(s => t(`status.${s}`));
+    const description = showFullDescription
+      ? t(`cards.${card.id}.descriptions.0`, { defaultValue: baseVariation.description })
+      : undefined;
+
     return (
-      <UiCard
-        key={key}
-        className={`relative overflow-hidden aspect-[2/3] ${className}`}
-        onClick={onClick}
-        title={cardTitle}
-      >
-        {card.imgUrl && (
-          <Image
-            src={card.imgUrl}
-            alt={translatedName}
-            fill
-            className="object-cover"
-            sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
-          />
-        )}
-        <div className="absolute inset-0 bg-linear-to-b from-black/30 via-black/10 to-black/60" />
-
-        <div className="flex items-start p-3 gap-3 z-index-10 relative">
-          <div className="flex flex-col items-start">
-            <div 
-              className="text-5xl font-extrabold text-white leading-none text-shadow-2xl" 
-            >
-              {baseVariation.cost}
-            </div>
-          </div>
-          <div className="min-w-0 flex-1">
-            <div 
-              className="text-base md:text-2xl font-bold text-white text-shadow-2xl truncate"
-            >
-              {translatedName}
-            </div>
-            <div 
-              className="text-xs md:text-base text-white/90 text-shadow-2xl"
-            >
-              {subtitle || t(`category.${card.category}`)}
-            </div>
-          </div>
-        </div>
-
-        {showFullDescription && (
-          <div 
-            className="absolute left-2 right-2 bottom-3 md:bottom-12 text-xs md:text-lg text-center text-white text-shadow-2xl whitespace-pre-wrap"
-          >
-            {baseVariation.statuses && baseVariation.statuses.length > 0 && (
-              <div className="mb-1 text-[11px] font-semibold text-purple-300">
-                [{baseVariation.statuses.map(s => t(`status.${s}`)).join(' / ')}]
-              </div>
-            )}
-            {t(`cards.${card.id}.descriptions.0`, { defaultValue: baseVariation.description })}
-          </div>
-        )}
+      <UiCard key={key} className={`cursor-pointer ${className}`} onClick={onClick} title={cardTitle}>
+        <CardFrame
+          imgUrl={card.imgUrl}
+          alt={translatedName}
+          cost={baseVariation.cost}
+          name={translatedName}
+          category={subtitle || t(`category.${card.category}`)}
+          description={description}
+          statuses={statuses}
+        />
       </UiCard>
     );
   };
