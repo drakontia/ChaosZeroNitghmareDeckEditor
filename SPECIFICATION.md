@@ -323,7 +323,7 @@ interface Character {
 
 // カード種別
 enum CardType {
-  NORMAL = "normal",
+  CHARACTER = "character",
   SHARED = "shared",
   MONSTER = "monster",
   FORBIDDEN = "forbidden"
@@ -386,7 +386,6 @@ interface Card {
   category: CardCategory;
   statuses: CardStatus[];
   isBasicCard?: boolean;
-  isCharacterCard?: boolean;
   allowedJobs?: JobType[] | "all";
   hiramekiVariations: HiramekiVariation[];
 }
@@ -445,22 +444,22 @@ interface Deck {
 ### 開発環境
 
 ```bash
-npm install    # 依存関係のインストール
-npm run dev    # 開発サーバー起動（localhost:3000）
+pnpm install   # 依存関係のインストール
+pnpm dev       # 開発サーバー起動（localhost:3000）
 ```
 
 ### テスト
 
 ```bash
-npm test       # E2Eテスト実行
-npm run test:ui # テストUIモード
+pnpm test      # E2Eテスト実行
+pnpm test:ui   # テストUIモード
 ```
 
 ### プロダクションビルド
 
 ```bash
-npm run build  # プロダクションビルド
-npm start      # プロダクションサーバー起動
+pnpm build     # プロダクションビルド
+pnpm start     # プロダクションサーバー起動
 ```
 
 ## 拡張性
