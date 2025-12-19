@@ -2,6 +2,7 @@
 
 import { useTranslations, useLocale } from 'next-intl';
 import { useDeckBuilder } from "@/hooks/useDeckBuilder";
+import { CardType } from "@/types";
 import { CharacterSelector } from "./CharacterSelector";
 import { EquipmentSelector } from "./EquipmentSelector";
 import { CardSelector } from "./CardSelector";
@@ -11,7 +12,7 @@ import { CHARACTERS, EQUIPMENT } from "@/lib/data";
 import { calculateFaintMemory } from "@/lib/deck-utils";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
-import { Field, FieldLabel, FieldGroup, FieldSet, FieldSeparator } from "./ui/field";
+import { Field, FieldLabel, FieldGroup, FieldSet } from "./ui/field";
 import { Input } from './ui/input';
 import { Brain, CardSim, Clock12 } from 'lucide-react';
 
@@ -33,7 +34,6 @@ export function DeckBuilder() {
     setCardGodHirameki,
     clearDeck,
     setName,
-    setEgoLevel,
     togglePotential
   } = useDeckBuilder();
 
@@ -168,6 +168,11 @@ export function DeckBuilder() {
                   onRestoreCard={restoreCard}
                   removedCards={deck.removedCards}
                   convertedCards={deck.convertedCards}
+                  presentHiramekiIds={new Set(
+                    deck.cards
+                      .filter(c => c.type === CardType.CHARACTER)
+                      .map(c => c.id)
+                  )}
                 />
               </CardContent>
             </Card>

@@ -13,12 +13,23 @@ interface CardSelectorProps {
   onRestoreCard: (card: Card) => void;
   removedCards?: Map<string, number>;
   convertedCards?: Set<string>;
+  presentHiramekiIds?: Set<string>;
 }
 
-export function CardSelector({ character, onAddCard, onRestoreCard, removedCards, convertedCards }: CardSelectorProps) {
+export function CardSelector({ character, onAddCard, onRestoreCard, removedCards, convertedCards, presentHiramekiIds }: CardSelectorProps) {
   const t = useTranslations();
   const characterHiramekiCards = character ? getCharacterHiramekiCards(character) : [];
   const addableCards = getAddableCards(character?.job);
+
+  // ヒラメキカードの表示制御：デッキに存在・削除済みは非表示
+  const hiddenHiramekiIds = new Set<string>();
+  if (presentHiramekiIds) {
+    for (const id of presentHiramekiIds.values()) hiddenHiramekiIds.add(id);
+  }
+  if (removedCards) {
+    for (const id of removedCards.keys()) hiddenHiramekiIds.add(id);
+  }
+  const visibleCharacterHiramekiCards = characterHiramekiCards.filter(card => !hiddenHiramekiIds.has(card.id));
 
   const getCardTypeLabel = (type: CardType) => {
     switch (type) {
@@ -161,11 +172,11 @@ export function CardSelector({ character, onAddCard, onRestoreCard, removedCards
         )}
 
         {/* Character Hirameki Cards */}
-        {characterHiramekiCards.length > 0 && (
+        {visibleCharacterHiramekiCards.length > 0 && (
           <div className="space-y-3">
             <h3 className="text-lg font-semibold">ヒラメキカード</h3>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-              {characterHiramekiCards.map(card => renderCardButton(card))}
+              {visibleCharacterHiramekiCards.map(card => renderCardButton(card))}
             </div>
           </div>
         )}

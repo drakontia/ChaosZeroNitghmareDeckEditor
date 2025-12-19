@@ -106,11 +106,11 @@ export function HiramekiControls({
                     alt={translatedName}
                     cost={info.cost}
                     name={translatedName}
-                    category={`${t("card.level")}${level}`}
+                    category={t(`category.${card.category}`)}
                     description={t(`cards.${card.id}.descriptions.${level}`, { defaultValue: info.description })}
                     statuses={info.statuses?.map(s => t(`status.${s}`))}
                     className="border"
-                    variant="compact"
+                    variant="default"
                   />
                 </button>
               );
