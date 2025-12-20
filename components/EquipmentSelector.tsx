@@ -121,7 +121,7 @@ export function EquipmentSelector({ equipment, selectedEquipment, onSelect }: Eq
 
   return (
     <FieldGroup className="pt-6 gap-2">
-      <FieldLabel className="text-2xl"><Swords />{t('equipment.title')}</FieldLabel>
+      <FieldLabel className="text-2xl text-gray-500"><Swords />{t('equipment.title')}</FieldLabel>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {renderEquipmentSection(EquipmentType.WEAPON, "equipment.weapon.title")}
         {renderEquipmentSection(EquipmentType.ARMOR, "equipment.armor.title")}

@@ -196,9 +196,9 @@ export function DeckBuilder({ shareId }: DeckBuilderProps) {
                 {/* Points/Stats Section */}
                 <FieldGroup className='gap-2'>
                   <Field orientation={'horizontal'} className='border-b'>
-                    <FieldLabel className='text-2xl align-middle'><Clock12 className='align-middle'/>{t('deck.createdDate')}</FieldLabel>
+                    <FieldLabel className='text-2xl text-gray-500 align-middle'><Clock12 className='align-middle'/>{t('deck.createdDate')}</FieldLabel>
                     <div className="flex justify-between items-center p-2">
-                      <span className="text-2xl font-bold text-foreground">
+                      <span className="text-2xl font-bold text-gray-500">
                         {(() => {
                           const d = new Date(deck.createdAt);
                           const yy = String(d.getFullYear()).slice(-2);
@@ -210,15 +210,15 @@ export function DeckBuilder({ shareId }: DeckBuilderProps) {
                     </div>
                   </Field>
                   <Field orientation={'horizontal'} className='border-b'>
-                    <FieldLabel className='text-2xl'><CardSim />{t('deck.totalCards')}</FieldLabel>
+                    <FieldLabel className='text-2xl text-gray-500'><CardSim />{t('deck.totalCards')}</FieldLabel>
                     <div className="flex justify-between items-center p-2">
-                      <span className="text-2xl font-bold text-primary">{deck.cards.length}</span>
+                      <span className="text-2xl font-bold text-gray-500">{deck.cards.length}</span>
                     </div>
                   </Field>
                   <Field orientation={'horizontal'}>
-                    <FieldLabel className='text-2xl'><Brain />{t('character.faintMemory')}</FieldLabel>
+                    <FieldLabel className='text-2xl text-gray-500'><Brain />{t('character.faintMemory')}</FieldLabel>
                     <div className="flex justify-between items-center p-2">
-                      <span className="text-2xl font-bold text-primary">{faintMemoryPoints} pt</span>
+                      <span className="text-2xl font-bold text-gray-500">{faintMemoryPoints} pt</span>
                     </div>
                   </Field>
                 </FieldGroup>
