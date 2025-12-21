@@ -48,8 +48,7 @@ export function DeckDisplay({ cards, egoLevel, hasPotential, allowedJob, onRemov
         let godEffectId: string | undefined;
         let godEffectFallback: string | undefined;
         if (card.godHiramekiType && card.godHiramekiEffectId) {
-          const godDef = GOD_HIRAMEKI_EFFECTS[card.godHiramekiType];
-          const effect = godDef.effects.find(e => e.id === card.godHiramekiEffectId);
+          const effect = GOD_HIRAMEKI_EFFECTS.find(e => e.id === card.godHiramekiEffectId);
           if (effect) {
             godEffectId = effect.id;
             godEffectFallback = effect.additionalEffect;

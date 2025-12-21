@@ -81,8 +81,7 @@ test.describe('Deck Editor', () => {
     await expect(deckCard).toBeVisible();
 
     // Deck total should go from 4 to 5
-    const totalCardsField = page.getByRole('group').filter({ hasText: 'カード枚数' });
-    await expect(totalCardsField.locator('span.text-primary').filter({ hasText: '5' })).toBeVisible();
+    await expect(page.getByTestId('total-cards')).toContainText('5');
   });
 
   test('should change card hirameki state and update description to selected level', async ({ page }) => {
@@ -164,8 +163,7 @@ test.describe('Deck Editor', () => {
     await deleteBtn.click();
 
     // Verify card is removed
-    const totalCardsField = page.getByRole('group').filter({ hasText: 'カード枚数' });
-    await expect(totalCardsField.getByText('4')).toBeVisible();
+    await expect(page.getByTestId('total-cards')).toContainText('4');
   });
 
   test('should clear entire deck', async ({ page }) => {
@@ -196,8 +194,7 @@ test.describe('Deck Editor', () => {
     await page.locator('div[title="禁呪"]').first().click();
 
     // Verify deck total now equals 8 (4 start + 4 added)
-    const totalCardsField = page.getByRole('group').filter({ hasText: 'カード枚数' });
-    await expect(totalCardsField.getByText('8')).toBeVisible();
+    await expect(page.getByTestId('total-cards')).toContainText('8');
   });
 
   test('hirameki cards should hide after add and reappear on undo', async ({ page }) => {
@@ -273,8 +270,7 @@ test.describe('Deck Editor', () => {
     const addedCardName = await addFirstHiramekiCard(page);
 
     // Confirm deck card count is now 5
-    const totalCardsField = page.getByRole('group').filter({ hasText: 'カード枚数' });
-    await expect(totalCardsField.locator('span.text-primary').filter({ hasText: '5' })).toBeVisible();
+    await expect(page.getByTestId('total-cards')).toContainText('5');
 
     // Click share and capture alert
     const shareBtn = page.getByRole('button', { name: '共有' });
@@ -299,8 +295,7 @@ test.describe('Deck Editor', () => {
 
     // Verify shared page reflects the same deck state
     await expect(page.getByText('チズル').first()).toBeVisible();
-    const sharedTotalField = page.getByRole('group').filter({ hasText: 'カード枚数' });
-    await expect(sharedTotalField.locator('span.text-primary').filter({ hasText: '5' })).toBeVisible();
+    await expect(page.getByTestId('total-cards')).toContainText('5');
 
     // Verify the previously added card is present in the shared deck
     const sharedDeckCard = getDeckCardContainerByName(page, addedCardName);
@@ -344,8 +339,7 @@ test.describe('Deck Editor', () => {
 
     // Verify restored deck
     await expect(page.getByText('チズル').first()).toBeVisible();
-    const totalCardsField = page.getByRole('group').filter({ hasText: 'カード枚数' });
-    await expect(totalCardsField.locator('span.text-primary', { hasText: /^5$/ })).toBeVisible();
+    await expect(page.getByTestId('total-cards')).toContainText('5');
     await expect(page.locator('#deck-name')).toHaveValue('e2e-save');
   });
 });

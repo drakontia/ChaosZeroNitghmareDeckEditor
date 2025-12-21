@@ -4,8 +4,7 @@ import { useTranslations } from "next-intl";
 import { CircleX, Undo2, Copy, ArrowRightLeft, Menu } from "lucide-react";
 import { DeckCard, Card, JobType } from "@/types";
 import { ConversionModal } from "./ConversionModal";
-
-const ACTION_BUTTON_CLASS = "flex items-center justify-center px-1 py-2 hover:bg-black/10";
+import { Button } from "./ui/button";
 
 interface CardActionsMenuProps {
   card: DeckCard;
@@ -16,13 +15,13 @@ interface CardActionsMenuProps {
   onUndoCard: (deckId: string) => void;
 }
 
-export function CardActionsMenu({ 
+export function CardActionsMenu({
   card,
   allowedJob,
-  onRemoveCard, 
-  onCopyCard, 
-  onConvertCard, 
-  onUndoCard 
+  onRemoveCard,
+  onCopyCard,
+  onConvertCard,
+  onUndoCard
 }: CardActionsMenuProps) {
   const t = useTranslations();
   const [isOpen, setIsOpen] = useState(false);
@@ -40,56 +39,66 @@ export function CardActionsMenu({
 
   return (
     <>
-      <button
+      <Button
         type="button"
+        variant="outline"
+        size="icon"
         aria-label={t("actions.menu", { defaultValue: "メニュー" })}
         onClick={() => setIsOpen(!isOpen)}
-        className="inline-flex items-center justify-center rounded-full bg-white text-black hover:bg-gray-100 transition h-7 w-7 ring-1 ring-black/50 shadow-md"
+        className="rounded-full"
         title={t("actions.menu", { defaultValue: "メニュー" })}
       >
         <Menu className="h-5 w-5" />
-      </button>
+      </Button>
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-7 rounded-md border bg-white text-black shadow-lg z-20">
-          <button
+        <div className="absolute right-0 mt-1 z-20">
+          <Button
             type="button"
-            className={ACTION_BUTTON_CLASS}
+            variant="destructive"
+            size="icon"
+            className="rounded-full"
             onClick={() => { onRemoveCard(card.deckId); setIsOpen(false); }}
             aria-label={t("common.delete", { defaultValue: "削除" })}
             title={t("common.delete", { defaultValue: "削除" })}
           >
             <CircleX className="h-5 w-5" />
-          </button>
+          </Button>
           {!card.isBasicCard && (
-            <button
+            <Button
               type="button"
-              className={ACTION_BUTTON_CLASS}
+              variant="outline"
+              size="icon"
+              className="rounded-full"
               onClick={() => { onCopyCard(card.deckId); setIsOpen(false); }}
               aria-label={t("common.copy", { defaultValue: "コピー" })}
               title={t("common.copy", { defaultValue: "コピー" })}
             >
               <Copy className="h-5 w-5" />
-            </button>
+            </Button>
           )}
-          <button
+          <Button
             type="button"
-            className={ACTION_BUTTON_CLASS}
+            variant="outline"
+            size="icon"
+            className="rounded-full"
             onClick={handleConvertClick}
             aria-label={t("common.convert", { defaultValue: "変換" })}
             title={t("common.convert", { defaultValue: "変換" })}
           >
             <ArrowRightLeft className="h-5 w-5" />
-          </button>
+          </Button>
           {!card.isStartingCard && (
-            <button
+            <Button
               type="button"
-              className={ACTION_BUTTON_CLASS}
+              variant="outline"
+              size="icon"
+              className="rounded-full"
               onClick={() => { onUndoCard(card.deckId); setIsOpen(false); }}
               aria-label={t("actions.undo", { defaultValue: "戻す" })}
               title={t("actions.undo", { defaultValue: "戻す" })}
             >
               <Undo2 className="h-5 w-5" />
-            </button>
+            </Button>
           )}
         </div>
       )}

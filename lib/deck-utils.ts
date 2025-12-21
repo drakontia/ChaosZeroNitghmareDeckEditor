@@ -44,8 +44,7 @@ export function getCardInfo(
 
   // Apply god hirameki if active and an effect is selected
   if (card.godHiramekiType && card.godHiramekiEffectId && !card.isBasicCard) {
-    const godDef = GOD_HIRAMEKI_EFFECTS[card.godHiramekiType];
-    const effect = godDef.effects.find(e => e.id === card.godHiramekiEffectId);
+    const effect = GOD_HIRAMEKI_EFFECTS.find(e => e.id === card.godHiramekiEffectId);
     if (effect) {
       description = `${description}\n${effect.additionalEffect}`;
       if (effect.costModifier !== undefined) {

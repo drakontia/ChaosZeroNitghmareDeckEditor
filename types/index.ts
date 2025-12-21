@@ -111,16 +111,16 @@ export enum GodType {
 // Single God Hirameki effect option
 export interface GodHiramekiEffectOption {
   id: string;              // Unique ID for this effect
-  name: string;            // Effect name
   additionalEffect: string; // Description of the effect
   costModifier?: number;   // Optional cost change
 }
 
-// God Hirameki definition with multiple effects per god
+// Unified God Hirameki effect definition (not grouped by god)
 export interface GodHiramekiDefinition {
-  god: GodType;
-  name: string;            // Translation key for god name
-  effects: GodHiramekiEffectOption[]; // Multiple effect options per god
+  id: string;              // Effect id (matches i18n key under godEffects)
+  additionalEffect: string; // Fallback description
+  costModifier?: number;   // Optional cost change
+  gods: GodType[] | "all"; // Applicable gods or all
 }
 
 export interface Card {

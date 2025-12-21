@@ -209,7 +209,7 @@ export function DeckBuilder({ shareId }: DeckBuilderProps) {
                       </span>
                     </div>
                   </Field>
-                  <Field orientation={'horizontal'} className='border-b'>
+                  <Field orientation={'horizontal'} className='border-b' data-testid="total-cards">
                     <FieldLabel className='text-2xl text-gray-500'><CardSim />{t('deck.totalCards')}</FieldLabel>
                     <div className="flex justify-between items-center p-2">
                       <span className="text-2xl font-bold text-gray-500">{deck.cards.length}</span>

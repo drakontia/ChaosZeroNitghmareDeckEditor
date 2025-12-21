@@ -46,31 +46,33 @@ export function HiramekiControls({
 
   return (
     <>
-      <button
+      <Button
         type="button"
+        size="icon"
         aria-label={t("card.hirameki")}
         title={t("card.hirameki")}
         onClick={() => setOpenHirameki(true)}
         className={cn(
-          "inline-flex items-center justify-center rounded-full transition h-8 w-8",
+          "inline-flex items-center justify-center rounded-full transition",
           isHiramekiActive
             ? "bg-yellow-400 text-black hover:bg-yellow-400/90"
             : "bg-secondary text-secondary-foreground hover:bg-secondary/90"
         )}
       >
         {isHiramekiActive ? (
-          <Lightbulb className="h-5 w-5" />
+          <Lightbulb className="h-6 w-6" />
         ) : (
-          <LightbulbOff className="h-5 w-5" />
+          <LightbulbOff className="h-6 w-6" />
         )}
-      </button>
-      <button
+      </Button>
+      <Button
         type="button"
+        size="icon"
         aria-label={t("card.godSelect")}
         title={t("card.godSelect")}
         onClick={() => setOpenGod(true)}
         className={cn(
-          "inline-flex items-center justify-center rounded-full transition h-8 w-8",
+          "inline-flex items-center justify-center rounded-full transition",
           isGodActive
             ? "bg-yellow-400 text-black hover:bg-yellow-400/90"
             : "bg-secondary text-secondary-foreground hover:bg-secondary/90"
@@ -81,7 +83,7 @@ export function HiramekiControls({
         ) : (
           <ZapOff className="h-5 w-5" />
         )}
-      </button>
+      </Button>
 
       {/* ヒラメキ選択モーダル（画像付きカード形プレビュー） */}
       <Dialog open={openHirameki} onOpenChange={setOpenHirameki}>
@@ -153,7 +155,7 @@ export function HiramekiControls({
                   className="shrink-0"
                   onClick={() => setSelectedGod(g)}
                 >
-                  {t(`god.${GOD_HIRAMEKI_EFFECTS[g].name}`, { defaultValue: GOD_HIRAMEKI_EFFECTS[g].name })}
+                  {t(`god.${g}`)}
                 </Button>
               ))}
             </div>
@@ -165,7 +167,7 @@ export function HiramekiControls({
               <div className="text-sm text-muted-foreground">{t('card.god')}</div>
             ) : (
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                {GOD_HIRAMEKI_EFFECTS[selectedGod].effects.map((effect) => {
+                {GOD_HIRAMEKI_EFFECTS.filter(e => e.gods === "all" || e.gods.includes(selectedGod)).map((effect) => {
                   const baseInfo = getCardInfo(card, egoLevel, hasPotential);
                   const costWithGod = baseInfo.cost + (effect.costModifier ?? 0);
                   const isSelected = card.godHiramekiType === selectedGod && card.godHiramekiEffectId === effect.id;
@@ -174,7 +176,7 @@ export function HiramekiControls({
                       key={effect.id}
                       className={cn("rounded-md", isSelected ? "ring-2 ring-primary" : "")}
                       onClick={() => { onSetGodHirameki(card.deckId, selectedGod); onSetGodHiramekiEffect(card.deckId, effect.id); setOpenGod(false); }}
-                      title={effect.name}
+                      title={t(`godEffects.${effect.id}`, { defaultValue: effect.id })}
                     >
                       <CardFrame
                         imgUrl={card.imgUrl}

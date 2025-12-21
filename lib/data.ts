@@ -6,10 +6,8 @@ export { CHARACTER_CARDS } from "./character-cards";
 export { OTHER_CARDS } from "./other-cards";
 export { EQUIPMENT } from "./equipment";
 
-import { CHARACTERS } from "./characters";
 import { CHARACTER_CARDS } from "./character-cards";
 import { OTHER_CARDS } from "./other-cards";
-import { EQUIPMENT } from "./equipment";
 
 // ============================================================
 // 全カード統合 (All Cards Combined)

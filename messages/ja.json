@@ -68,66 +68,17 @@
     "vitol": "ヴィトル"
   },
   "godEffects": {
-    "kilken_1": {
-      "name": "追加ダメージ",
-      "additionalEffect": "攻撃時、追加ダメージを与える"
-    },
-    "kilken_2": {
-      "name": "クリティカル",
-      "additionalEffect": "クリティカル率が上昇する"
-    },
-    "kilken_3": {
-      "name": "連続攻撃",
-      "additionalEffect": "攻撃が2回連続で発動する"
-    },
-    "seclaid_1": {
-      "name": "防御強化",
-      "additionalEffect": "防御力を大幅に上昇させる"
-    },
-    "seclaid_2": {
-      "name": "ダメージ軽減",
-      "additionalEffect": "受けるダメージを50%軽減する"
-    },
-    "seclaid_3": {
-      "name": "バリア",
-      "additionalEffect": "次の攻撃を完全に無効化する"
-    },
-    "dialos_1": {
-      "name": "全体効果",
-      "additionalEffect": "全体効果に変化する"
-    },
-    "dialos_2": {
-      "name": "範囲拡大",
-      "additionalEffect": "効果範囲が2倍になる"
-    },
-    "dialos_3": {
-      "name": "味方強化",
-      "additionalEffect": "味方全体に効果を付与する"
-    },
-    "nihilum_1": {
-      "name": "効果無効化",
-      "additionalEffect": "敵の強化効果を無効化する"
-    },
-    "nihilum_2": {
-      "name": "デバフ解除",
-      "additionalEffect": "味方のデバフを全て解除する"
-    },
-    "nihilum_3": {
-      "name": "沈黙",
-      "additionalEffect": "敵をスキル使用不可にする"
-    },
-    "vitol_1": {
-      "name": "HP回復",
-      "additionalEffect": "HPを回復する"
-    },
-    "vitol_2": {
-      "name": "継続回復",
-      "additionalEffect": "3ターンの間、継続的にHPを回復する"
-    },
-    "vitol_3": {
-      "name": "蘇生",
-      "additionalEffect": "倒れた味方を復活させる"
-    }
+    "godhirameki_1": "ドロー1",
+    "godhirameki_2": "アクションポイント1獲得",
+    "godhirameki_3": "このカードのコスト1減少",
+    "godhirameki_4": "このカードのシールド量30%増加",
+    "godhirameki_5": "このカードのダメージ量30%増加",
+    "godhirameki_6": "このカードの強靱度ダメージ100%増加",
+    "godhirameki_7": "対象に脆弱2",
+    "godhirameki_8": "対象に苦痛4",
+    "godhirameki_9": "士気1、決意1",
+    "godhirameki_10": "常に弱点攻撃",
+    "godhirameki_11": "ランダムな味方が対象に挟み撃ち"
   },
   "category": {
     "attack": "攻撃",

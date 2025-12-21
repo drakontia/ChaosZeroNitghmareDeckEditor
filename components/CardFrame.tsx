@@ -3,6 +3,7 @@ import Image from "next/image";
 import { ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
+import { Zap } from "lucide-react";
 
 interface CardFrameProps {
   imgUrl?: string;
@@ -73,9 +74,9 @@ export function CardFrame({
       <div className="absolute inset-0 bg-linear-to-b from-black/30 via-black/10 to-black/60" />
 
       {/* Top overlay: cost + name/category */}
-      <div className="flex items-start pt-3 pl-4 gap-2 z-10 relative">
+      <div className="flex items-start pt-3 pl-4 gap-2 z-10 relative bg-gray-600">
         <div className="flex flex-col items-start">
-          <div className={cn(costClass, "font-extrabold text-white text-shadow-2xl leading-none")}>{cost}</div>
+          <div className={cn(costClass, "font-extrabold text-white underline decoration-1 text-shadow-2xl leading-none")}>{cost}</div>
         </div>
         <div className="min-w-0 flex-1">
           <div className={cn(nameClass, "font-bold text-white text-shadow-2xl truncate")} title={displayName}>{displayName}</div>
@@ -99,7 +100,7 @@ export function CardFrame({
 
       {/* Bottom overlay: statuses + description */}
       {((descriptionId || description) || (statuses && statuses.length > 0)) && (
-        <div className={cn("absolute left-2 right-2", bottomOffsetClass, "text-center text-white", descTextClass, "text-shadow-4xl whitespace-pre-wrap")}> 
+        <div className={cn("absolute left-2 right-2 bg-gray-600", bottomOffsetClass, "text-center text-white", descTextClass, "text-shadow-4xl whitespace-pre-wrap")}> 
           {statuses && statuses.length > 0 && (
             <div className="mb-1 font-semibold text-yellow-300">
               [{statuses.join(" / ")}]
@@ -109,8 +110,8 @@ export function CardFrame({
             ? t(descriptionId, { defaultValue: descriptionFallback ?? "" })
             : description}
           {godEffectId && (
-            <div className="mt-2 text-yellow-300 font-semibold">
-              {t(`godEffects.${godEffectId}.additionalEffect`, { defaultValue: godEffectFallback ?? "" })}
+            <div className="mt-2 font-semibold">
+              {t(`godEffects.${godEffectId}`, { defaultValue: godEffectFallback ?? "" })}
             </div>
           )}
         </div>
