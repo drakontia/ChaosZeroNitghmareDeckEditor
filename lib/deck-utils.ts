@@ -11,6 +11,7 @@ export function getCardInfo(
 ): {
   cost: number;
   description: string;
+  category: import("@/types").CardCategory;
   statuses?: string[]; // Return raw status array for translation
 } {
   // If this card has been converted, use the target card's variations for info
@@ -21,6 +22,7 @@ export function getCardInfo(
   
   let cost = variation.cost;
   let description = variation.description;
+  const category = variation.category ?? baseCard.category;
   const statuses = variation.statuses && variation.statuses.length > 0 
     ? variation.statuses
     : undefined;
@@ -53,7 +55,7 @@ export function getCardInfo(
     }
   }
 
-  return { cost, description, statuses };
+  return { cost, description, category, statuses };
 }
 
 // Calculate Faint Memory points based on deck edits
