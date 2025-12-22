@@ -167,7 +167,7 @@ export const SHARED_CARDS: CznCard[] = [
   },
   {
     id: "shared_15",
-    name: "堅個だ",
+    name: "堅固だ",
     type: CardType.SHARED,
     category: CardCategory.SKILL,
     statuses: [],
@@ -273,28 +273,6 @@ export const SHARED_CARDS: CznCard[] = [
     allowedJobs: [JobType.STRIKER, JobType.VANGUARD],
     hiramekiVariations: [
       { level: 0, cost: 0, description: "手札に攻撃カードがない場合ドロー2" }
-    ]
-  },
-  {
-    id: "shared_25",
-    name: "殻形成細胞",
-    type: CardType.SHARED,
-    category: CardCategory.SKILL,
-    statuses: [CardStatus.RETAIN],
-    allowedJobs: [JobType.STRIKER, JobType.VANGUARD],
-    hiramekiVariations: [
-      { level: 0, cost: 0, description: "シールド70%\n手札のカードに応じてシールド+25%" }
-    ]
-  },
-  {
-    id: "shared_26",
-    name: "攻撃性の突然変異",
-    type: CardType.SHARED,
-    category: CardCategory.SKILL,
-    statuses: [CardStatus.EXHAUST],
-    allowedJobs: [JobType.STRIKER, JobType.VANGUARD],
-    hiramekiVariations: [
-      { level: 0, cost: 0, description: "自分の攻撃カードドロー1\n1ターンの間、そのカードのダメージ量+50%" }
     ]
   },
   // For Ranger and Hunter jobs
@@ -472,28 +450,6 @@ export const SHARED_CARDS: CznCard[] = [
     allowedJobs: [JobType.RANGER, JobType.HUNTER],
     hiramekiVariations: [
       { level: 0, cost: 2, description: "ダメージ400%\nチャージ：クレジット20獲得" }
-    ]
-  },
-  {
-    id: "shared_43",
-    name: "筋肉強化進化体",
-    type: CardType.SHARED,
-    category: CardCategory.ATTACK,
-    statuses: [],
-    allowedJobs: [JobType.STRIKER, JobType.VANGUARD],
-    hiramekiVariations: [
-      { level: 0, cost: 1, description: "ダメージ80%×2\nインスピレーション：ヒット数2回追加" }
-    ]
-  },
-  {
-    id: "shared_44",
-    name: "感染性ウイルス",
-    type: CardType.SHARED,
-    category: CardCategory.ATTACK,
-    statuses: [],
-    allowedJobs: [JobType.RANGER, JobType.HUNTER],
-    hiramekiVariations: [
-      { level: 0, cost: 2, description: "ダメージ120%×1\n感応：ヒット数1回追加（最大5重複）" }
     ]
   },
   // For Controller and Psionic jobs
@@ -684,26 +640,4 @@ export const SHARED_CARDS: CznCard[] = [
       { level: 0, cost: 1, description: "ドロー3" }
     ]
   },
-  {
-    id: "shared_62",
-    name: "強制学習装置",
-    type: CardType.SHARED,
-    category: CardCategory.UPGRADE,
-    statuses: [CardStatus.LEAD],
-    allowedJobs: [JobType.CONTROLLER, JobType.PSIONIC],
-    hiramekiVariations: [
-      { level: 0, cost: 2, description: "カード4枚使用時、ドロー1（ターンごとに1回）" }
-    ]
-  },
-  {
-    id: "shared_63",
-    name: "自己発電実験",
-    type: CardType.SHARED,
-    category: CardCategory.UPGRADE,
-    statuses: [CardStatus.LEAD],
-    allowedJobs: [JobType.CONTROLLER, JobType.PSIONIC],
-    hiramekiVariations: [
-      { level: 0, cost: 2, description: "手札のカードが6枚以上の時、ランダムなカード1枚1ターンのコスト0（ターンごとに1回）" }
-    ]
-  }
 ];

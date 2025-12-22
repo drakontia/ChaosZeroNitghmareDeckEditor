@@ -1,4 +1,4 @@
-import { CznCard, CardType, CardCategory, CardStatus } from "@/types";
+import { CznCard, CardType, CardCategory, CardStatus, JobType } from "@/types";
 
 /**
  * Forbidden Cards
@@ -10,6 +10,94 @@ import { CznCard, CardType, CardCategory, CardStatus } from "@/types";
  * The name and description fields below serve as fallback values when translations are not available.
  */
 export const FORBIDDEN_CARDS: CznCard[] = [
+  {
+    id: "forbidden_card_8",
+    name: "筋肉強化進化体",
+    type: CardType.FORBIDDEN,
+    category: CardCategory.ATTACK,
+    statuses: [],
+    allowedJobs: [JobType.RANGER, JobType.HUNTER],
+    hiramekiVariations: [
+      { level: 0, cost: 1, description: "ダメージ80%×2\nインスピレーション:ヒット数2回増加" }
+    ]
+  },
+  {
+    id: "forbidden_card_9",
+    name: "感染性ウイルス",
+    type: CardType.FORBIDDEN,
+    category: CardCategory.ATTACK,
+    statuses: [],
+    allowedJobs: [JobType.RANGER, JobType.HUNTER],
+    hiramekiVariations: [
+      { level: 0, cost: 2, description: "ダメージ120%×1\n感化:ヒット数1回増加(最大5重複)" }
+    ]
+  },
+  {
+    id: "forbidden_card_10",
+    name: "攻撃性の突然変異",
+    type: CardType.FORBIDDEN,
+    category: CardCategory.SKILL,
+    statuses: [CardStatus.EXHAUST],
+    allowedJobs: [JobType.STRIKER, JobType.VANGUARD],
+    hiramekiVariations: [
+      { level: 0, cost: 0, description: "自分の攻撃カードドロー1、1ターンの間、そのカードのダメージ量+50%" }
+    ]
+  },
+  {
+    id: "forbidden_card_11",
+    name: "殻形成細胞",
+    type: CardType.FORBIDDEN,
+    category: CardCategory.SKILL,
+    statuses: [CardStatus.RETAIN],
+    allowedJobs: [JobType.STRIKER, JobType.VANGUARD],
+    hiramekiVariations: [
+      { level: 0, cost: 0, description: "シールド70%\n手札のカードに応じてシールド+25%" }
+    ]
+  },
+  {
+    id: "forbidden_card_12",
+    name: "強制略奪",
+    type: CardType.FORBIDDEN,
+    category: CardCategory.SKILL,
+    statuses: [],
+    allowedJobs: "all",
+    hiramekiVariations: [
+      { level: 0, cost: 0, description: "ドロー1\n山札または捨て札から、ランダムな禁忌カード1枚を手元に移動" }
+    ]
+  },
+  {
+    id: "forbidden_card_13",
+    name: "禁じられたアルゴリズム",
+    type: CardType.FORBIDDEN,
+    category: CardCategory.SKILL,
+    statuses: [CardStatus.EXHAUST],
+    allowedJobs: "all",
+    hiramekiVariations: [
+      { level: 0, cost: 3, description: "手札にランダムな禁忌カードを1枚生成" }
+    ]
+  },
+  {
+    id: "forbidden_card_14",
+    name: "自己発電実験",
+    type: CardType.FORBIDDEN,
+    category: CardCategory.UPGRADE,
+    statuses: [CardStatus.LEAD],
+    allowedJobs: [JobType.CONTROLLER, JobType.PSIONIC],
+    hiramekiVariations: [
+      { level: 0, cost: 2, description: "手札のカードが6枚以上の時、ランダムなカード1枚1ターンのコスト0（ターンごとに1回）" }
+    ]
+  },
+  {
+    id: "forbidden_card_15",
+    name: "強制学習装置",
+    type: CardType.FORBIDDEN,
+    category: CardCategory.UPGRADE,
+    statuses: [CardStatus.LEAD],
+    allowedJobs: [JobType.CONTROLLER, JobType.PSIONIC],
+    hiramekiVariations: [
+      { level: 0, cost: 2, description: "カード4枚使用時、ドロー1（ターンごとに1回）" }
+    ]
+  },
   {
     id: "forbidden_card_1",
     name: "禁忌:永生の飢え", // Fallback

@@ -12,11 +12,11 @@
     "sharedCards": "Shared Cards",
     "monsterCards": "Monster Cards",
     "forbiddenCards": "Forbidden Cards",
-    "basicCard": "Basic Card (No Hirameki)",
-    "hirameki": "Hirameki",
-    "godHirameki": "God Hirameki",
-    "godSelect": "Select God Hirameki",
-    "god": "Select which God's Hirameki to use",
+    "basicCard": "Basic Card (No Epiphany)",
+    "hirameki": "Epiphany",
+    "godHirameki": "God Epiphany",
+    "godSelect": "Select God Epiphany",
+    "god": "Select which God's Epiphany to use",
     "level": "Lv",
     "search": "Search Card"
   },
@@ -2148,18 +2148,6 @@
       "name": "再整備",
       "descriptions": {
         "0": "ドロー3"
-      }
-    },
-    "shared_62": {
-      "name": "強制学習装置",
-      "descriptions": {
-        "0": "カード4枚使用時、ドロー1（ターンごとに1回）"
-      }
-    },
-    "shared_63": {
-      "name": "自己発電実験",
-      "descriptions": {
-        "0": "手札のカードが6枚以上の時、ランダムなカード1枚1ターンのコスト0（ターンごとに1回）"
       }
     },
     "forbidden_card_2": {
