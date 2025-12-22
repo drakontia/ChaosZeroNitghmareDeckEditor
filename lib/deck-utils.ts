@@ -97,27 +97,37 @@ export function calculateFaintMemory(deck: Deck): number {
   }
 
   // Points for removed cards
+  // Calculate removal points based on sequential removal order across all cards
+  let removalIndex = 0;
   for (const [cardId, count] of deck.removedCards.entries()) {
     const removedCard = getCardById(cardId);
+    // Check if card is character type by card data
     const isCharacter = removedCard?.type === CardType.CHARACTER;
 
-    // Character card removal: +20pt regardless of removal count
-    if (isCharacter) {
-      points += 20;
-      continue;
-    }
+    // Apply points for each removal of this card
+    for (let i = 0; i < count; i++) {
+      removalIndex++;
+      
+      // Base points based on removal sequence number
+      let basePoints = 0;
+      if (removalIndex === 1) {
+        basePoints = 0;
+      } else if (removalIndex === 2) {
+        basePoints = 10;
+      } else if (removalIndex === 3) {
+        basePoints = 30;
+      } else if (removalIndex === 4) {
+        basePoints = 50;
+      } else if (removalIndex >= 5) {
+        basePoints = 70;
+      }
 
-    // Non-character removal follows escalating points
-    if (count === 1) {
-      points += 0;
-    } else if (count === 2) {
-      points += 10;
-    } else if (count === 3) {
-      points += 30;
-    } else if (count === 4) {
-      points += 50;
-    } else if (count >= 5) {
-      points += 70;
+      // Character card removal: base points + 20pt bonus
+      if (isCharacter) {
+        points += basePoints + 20;
+      } else {
+        points += basePoints;
+      }
     }
   }
 

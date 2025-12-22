@@ -10,7 +10,7 @@ describe('getCardInfo', () => {
       level: 0,
       cost: 5,
       description: 'Base description',
-      statuses: [CardStatus.OPENING]
+      statuses: [CardStatus.INITIATION]
     };
     
     const variation1: HiramekiVariation = {
@@ -48,7 +48,7 @@ describe('getCardInfo', () => {
     const info = getCardInfo(baseCard);
     expect(info.cost).toBe(5);
     expect(info.description).toBe('Base description');
-    expect(info.statuses).toContain(CardStatus.OPENING);
+    expect(info.statuses).toContain(CardStatus.INITIATION);
   });
 
   it('should return hirameki level 1 info', () => {
@@ -75,11 +75,11 @@ describe('getCardInfo', () => {
   it('should apply god hirameki modifier', () => {
     baseCard.selectedHiramekiLevel = 1;
     baseCard.godHiramekiType = GodType.KILKEN;
-    baseCard.godHiramekiEffectId = 'kilken_1';
+    baseCard.godHiramekiEffectId = 'godhirameki_3'; // Cost -1 effect
     const info = getCardInfo(baseCard);
     expect(info.cost).toBe(5); // 6 + (-1) cost modifier
     expect(info.description).toContain('Hirameki level 1');
-    expect(info.description).toContain('攻撃時、追加ダメージを与える');
+    expect(info.description).toContain('このカードのコスト1減少');
   });
 
   it('should handle missing hirameki variations gracefully', () => {
@@ -93,10 +93,10 @@ describe('getCardInfo', () => {
     baseCard.isBasicCard = true;
     baseCard.selectedHiramekiLevel = 1;
     baseCard.godHiramekiType = GodType.KILKEN;
-    baseCard.godHiramekiEffectId = 'kilken_1';
+    baseCard.godHiramekiEffectId = 'godhirameki_3';
     const info = getCardInfo(baseCard);
     // Should not apply god hirameki effect
-    expect(info.description).not.toContain('攻撃時、追加ダメージを与える');
+    expect(info.description).not.toContain('このカードのコスト1減少');
   });
 });
 
@@ -256,7 +256,7 @@ describe('calculateFaintMemory', () => {
       statuses: [],
       selectedHiramekiLevel: 0,
       godHiramekiType: GodType.KILKEN,
-      godHiramekiEffectId: 'kilken_1',
+      godHiramekiEffectId: 'godhirameki_1',
       isBasicCard: false,
       hiramekiVariations: [variation]
     });
@@ -264,28 +264,82 @@ describe('calculateFaintMemory', () => {
   });
 
   it('should calculate removed cards correctly', () => {
+    // Sequential removal: 1st=0, 2nd=10, 3rd=30, 4th=50, 5th+=70
+    // card-1: 1 removal = removal #1 = 0
+    // card-2: 2 removals = removal #2, #3 = 10 + 30 = 40
+    // card-3: 3 removals = removal #4, #5, #6 = 50 + 70 + 70 = 190
+    // card-4: 4 removals = removal #7-10 = 70 * 4 = 280
+    // card-5: 5 removals = removal #11-15 = 70 * 5 = 350
+    // total = 0 + 40 + 190 + 280 + 350 = 860
     baseDeck.removedCards.set('card-1', 1);
     baseDeck.removedCards.set('card-2', 2);
     baseDeck.removedCards.set('card-3', 3);
     baseDeck.removedCards.set('card-4', 4);
     baseDeck.removedCards.set('card-5', 5);
     
-    expect(calculateFaintMemory(baseDeck)).toBe(0 + 10 + 30 + 50 + 70);
+    expect(calculateFaintMemory(baseDeck)).toBe(860);
   });
 
   it('should add +20 for first removed character card', () => {
-    baseDeck.removedCards.set('char_card_1', 1);
+    baseDeck.removedCards.set('luke_starting_1', 1);
     expect(calculateFaintMemory(baseDeck)).toBe(20);
   });
 
-  it('should add +20 for removed character card even when count is 2', () => {
-    baseDeck.removedCards.set('char_card_1', 2);
-    expect(calculateFaintMemory(baseDeck)).toBe(20);
+  it('should add +30 for second removed character card', () => {
+    // card-1: 1 removal = removal #1 = 0
+    // luke_starting_1: 2 removals = removal #2, #3 = (10+20) + (30+20) = 30 + 50 = 80
+    baseDeck.removedCards.set('card-1', 1);
+    baseDeck.removedCards.set('luke_starting_1', 2);
+    expect(calculateFaintMemory(baseDeck)).toBe(80); // 0 + (10+20) + (30+20)
   });
 
-  it('should add +20 for removed character card even when count is 3', () => {
-    baseDeck.removedCards.set('char_card_1', 3);
-    expect(calculateFaintMemory(baseDeck)).toBe(20);
+  it('should add removal points for third removed character card', () => {
+    // card-1: 1 removal = removal #1 = 0
+    // card-2: 2 removals = removal #2, #3 = 10 + 30 = 40
+    // luke_starting_1: 3 removals = removal #4, #5, #6 = (50+20) + (70+20) + (70+20) = 70 + 90 + 90 = 250
+    baseDeck.removedCards.set('card-1', 1);
+    baseDeck.removedCards.set('card-2', 2);
+    baseDeck.removedCards.set('luke_starting_1', 3);
+    expect(calculateFaintMemory(baseDeck)).toBe(290); // 0 + (10+30) + (50+20) + (70+20) + (70+20)
+  });
+
+    it('should add removal points for 3 different character cards', () => {
+    // luke_starting_1: 1 removal = removal #1 = (0+20) = 20
+    // luke_starting_2: 2 removals = removal #2, #3 = (10+20) + (30+20) = 30 + 50 = 80
+    // luke_starting_3: 3 removals = removal #4, #5, #6 = (50+20) + (70+20) + (70+20) = 70 + 90 + 90 = 250
+    baseDeck.removedCards.set('luke_starting_1', 1);
+    baseDeck.removedCards.set('luke_starting_2', 2);
+    baseDeck.removedCards.set('luke_starting_3', 3);
+    expect(calculateFaintMemory(baseDeck)).toBe(350); // 20 + 80 + 250
+  });
+
+  it('should add +80 for removed 4 different character cards', () => {
+    // 4つの異なるキャラクターカードを1回ずつ削除
+    // 1番目の削除: 0 + 20 = 20
+    // 2番目の削除: 10 + 20 = 30
+    // 3番目の削除: 30 + 20 = 50
+    // 4番目の削除: 50 + 20 = 70 (but basePoints 50, so capped at 50? no, should be 50+20=70)
+    // wait, removalIndex goes 1,2,3,4 so: 0+20, 10+20, 30+20, 50+20 = 20+30+50+70=170
+    baseDeck.removedCards.set('luke_starting_1', 1);
+    baseDeck.removedCards.set('luke_starting_2', 1);
+    baseDeck.removedCards.set('luke_starting_3', 1);
+    baseDeck.removedCards.set('luke_starting_4', 1);
+    expect(calculateFaintMemory(baseDeck)).toBe(170); // (0+20) + (10+20) + (30+20) + (50+20)
+  });
+
+  it('should add +260 for removed 5 different character cards', () => {
+    // 5つの異なるキャラクターカードを1回ずつ削除
+    // 1番目: 0 + 20 = 20
+    // 2番目: 10 + 20 = 30
+    // 3番目: 30 + 20 = 50
+    // 4番目: 50 + 20 = 70
+    // 5番目: 70 + 20 = 90
+    baseDeck.removedCards.set('luke_starting_1', 1);
+    baseDeck.removedCards.set('luke_starting_2', 1);
+    baseDeck.removedCards.set('luke_starting_3', 1);
+    baseDeck.removedCards.set('luke_starting_4', 1);
+    baseDeck.removedCards.set('luke_hirameki_1', 1);
+    expect(calculateFaintMemory(baseDeck)).toBe(260); // (0+20) + (10+20) + (30+20) + (50+20) + (70+20)
   });
 
   it('should calculate copied cards correctly', () => {
@@ -321,7 +375,7 @@ describe('calculateFaintMemory', () => {
       statuses: [],
       selectedHiramekiLevel: 2,
       godHiramekiType: GodType.KILKEN,
-      godHiramekiEffectId: 'kilken_1',
+      godHiramekiEffectId: 'godhirameki_1',
       isBasicCard: false,
       hiramekiVariations: [variation]
     });
