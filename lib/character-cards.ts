@@ -1,7 +1,4 @@
-import { Card } from "@/components/ui/card";
 import { Card, CardType, CardCategory, CardStatus } from "@/types";
-import { createReadStream } from "node:fs";
-import { STATUS_CODES } from "node:http";
 
 /**
  * Character Cards

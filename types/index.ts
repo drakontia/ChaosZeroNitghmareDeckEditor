@@ -92,7 +92,7 @@ export enum CardStatus {
 // Hirameki variation for a card
 export interface HiramekiVariation {
   level: number; // 0 = base, 1-5 for character cards, 1-3 for other cards
-  cost: number;
+  cost: number | "X"; // "X" allows variable-cost cards defined by effect text
   description: string;
   // Hiramekiでカテゴリが変化する場合の上書き
   category?: CardCategory;
