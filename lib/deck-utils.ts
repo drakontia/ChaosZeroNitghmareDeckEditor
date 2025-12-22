@@ -132,17 +132,28 @@ export function calculateFaintMemory(deck: Deck): number {
   }
 
   // Points for copied cards
+  // Calculate copy points based on sequential copy order across all cards
+  let copyIndex = 0;
   for (const [cardId, count] of deck.copiedCards.entries()) {
-    if (count === 1) {
-      points += 0;
-    } else if (count === 2) {
-      points += 10;
-    } else if (count === 3) {
-      points += 30;
-    } else if (count === 4) {
-      points += 50;
-    } else if (count >= 5) {
-      points += 70;
+    // Apply points for each copy of this card
+    for (let i = 0; i < count; i++) {
+      copyIndex++;
+      
+      // Base points based on copy sequence number
+      let basePoints = 0;
+      if (copyIndex === 1) {
+        basePoints = 0;
+      } else if (copyIndex === 2) {
+        basePoints = 10;
+      } else if (copyIndex === 3) {
+        basePoints = 30;
+      } else if (copyIndex === 4) {
+        basePoints = 50;
+      } else if (copyIndex >= 5) {
+        basePoints = 70;
+      }
+      
+      points += basePoints;
     }
   }
 
