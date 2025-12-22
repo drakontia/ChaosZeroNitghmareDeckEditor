@@ -104,8 +104,7 @@
     "shareImageAlt": " deck image",
     "exportImage": "Export deck image",
     "exportImageFailed": "Failed to export deck image",
-    "totalCards": "Total Cards",
-    "totalCost": "Total Cost",
+    "totalCards": "Card Count",
     "noDeck": "Deck is empty",
     "namePlaceholder": "Enter deck name",
     "createdDate": "Created"
