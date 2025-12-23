@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, useEffect } from "react";
-import { Character, Equipment, CznCard, DeckCard, Deck, EquipmentType, GodType, CardType, CardStatus, RemovedCardEntry, CopiedCardEntry } from "@/types";
+import { Character, Equipment, CznCard, DeckCard, Deck, EquipmentType, GodType, CardType, CardStatus, RemovedCardEntry, CopiedCardEntry, ConvertedCardEntry } from "@/types";
 import { getCharacterStartingCards } from "@/lib/data";
 import { sortDeckCards } from "@/lib/deck-utils";
 
@@ -305,9 +305,17 @@ export function useDeckBuilder(initialDeck?: Deck) {
       const newCards = [...prev.cards];
       newCards[cardIndex] = convertedCard;
 
-      // Track conversion mapping (originalCardId -> convertedCardId)
+      // Track conversion with snapshot of original card state
       const newConverted = new Map(prev.convertedCards);
-      newConverted.set(cardToConvert.id, targetCard.id);
+      const snapshot: ConvertedCardEntry = {
+        convertedToId: targetCard.id,
+        originalType: cardToConvert.type,
+        selectedHiramekiLevel: cardToConvert.selectedHiramekiLevel,
+        godHiramekiType: cardToConvert.godHiramekiType,
+        godHiramekiEffectId: cardToConvert.godHiramekiEffectId,
+        isBasicCard: cardToConvert.isBasicCard
+      };
+      newConverted.set(cardToConvert.id, snapshot);
 
       return {
         ...prev,

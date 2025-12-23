@@ -1,4 +1,4 @@
-import { CardType, DeckCard, Deck, CardStatus, CardCategory, RemovedCardEntry, CopiedCardEntry } from "@/types";
+import { CardType, DeckCard, Deck, CardStatus, CardCategory, RemovedCardEntry, CopiedCardEntry, ConvertedCardEntry } from "@/types";
 import { GOD_HIRAMEKI_EFFECTS } from "@/lib/god-hirameki";
 import { getCardById } from "@/lib/data";
 
@@ -204,9 +204,29 @@ export function calculateFaintMemory(deck: Deck): number {
     }
   }
 
-  // Points for converted cards: +10pt each
-  if (deck.convertedCards.size > 0) {
-    points += deck.convertedCards.size * 10;
+  // Points for converted cards with original card attribute preservation
+  for (const [originalId, entry] of deck.convertedCards.entries()) {
+    // Base conversion points: +10pt per conversion
+    points += 10;
+
+    // Check if entry is a snapshot (ConvertedCardEntry)
+    const snapshot: ConvertedCardEntry | null = typeof entry === "string" ? null : entry as ConvertedCardEntry;
+    if (snapshot) {
+      // Preserve points from the ORIGINAL card state at conversion time
+      const originalType = snapshot.originalType;
+      if (originalType === CardType.SHARED || originalType === CardType.MONSTER) {
+        // Hirameki points from original card
+        if ((snapshot.selectedHiramekiLevel ?? 0) > 0) {
+          points += 10;
+        }
+      }
+      // God hirameki points from original card
+      if (snapshot.godHiramekiType && snapshot.godHiramekiEffectId && !snapshot.isBasicCard) {
+        points += 20;
+      }
+      // Note: Converted-to card points are already calculated in deck.cards loop above
+      // We only need to preserve the original card's attribute points here
+    }
   }
 
   return points;

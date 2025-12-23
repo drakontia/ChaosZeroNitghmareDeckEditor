@@ -527,4 +527,60 @@ describe('calculateFaintMemory (snapshot attribute handling)', () => {
     // Total expected: 40 + 90 = 130
     expect(calculateFaintMemory(deck)).toBe(130);
   });
-});
+
+  it('should add conversion points with snapshot attributes', () => {
+    // Convert shared card (with hirameki Lv1 and god) to monster card (with hirameki Lv2 and no god)
+    // Original shared card: ヒラメキLv1 + 神ヒラメキ有り
+    // Converted-to monster card in deck: ヒラメキLv2
+    deck.cards = [
+      {
+        id: 'monster_01',
+        deckId: 'monster_01_001',
+        name: { ja: 'モンスター1' },
+        type: CardType.MONSTER,
+        category: CardCategory.ATTACK,
+        description: { ja: 'モンスター説明' },
+        cost: 5,
+        selectedHiramekiLevel: 2,
+        godHiramekiType: null,
+        godHiramekiEffectId: null,
+        isBasicCard: false
+      }
+    ];
+
+    deck.convertedCards.set('shared_01', {
+      convertedToId: 'monster_01',
+      originalType: CardType.SHARED,
+      selectedHiramekiLevel: 1,
+      godHiramekiType: 'kilken',
+      godHiramekiEffectId: 'kilken_01',
+      isBasicCard: false
+    });
+
+    // Deck card points: type(80) + hirameki(10) = 90
+    // Base conversion: +10pt
+    // Original card preserved points: hirameki(10) + god(20) = 30
+    // Total: 90 + 10 + 30 = 130
+    expect(calculateFaintMemory(deck)).toBe(130);
+  });
+
+  it('should preserve conversion points even after converted card is removed', () => {
+    // Convert shared card with hirameki to monster, then remove the monster
+    // Original shared card: ヒラメキLv1
+    deck.cards = []; // Monster card removed from deck
+
+    deck.convertedCards.set('shared_01', {
+      convertedToId: 'monster_01',
+      originalType: CardType.SHARED,
+      selectedHiramekiLevel: 1,
+      godHiramekiType: null,
+      godHiramekiEffectId: null,
+      isBasicCard: false
+    });
+
+    // Base conversion: +10pt
+    // Converted-to card not in deck: no points
+    // Original card preserved points: hirameki(10) = 10
+    // Total: 10 + 0 + 10 = 20
+    expect(calculateFaintMemory(deck)).toBe(20);
+  });});

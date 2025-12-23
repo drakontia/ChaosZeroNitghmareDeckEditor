@@ -336,7 +336,13 @@ describe('useDeckBuilder', () => {
 
     expect(result.current.deck.cards).toHaveLength(1);
     expect(result.current.deck.cards[0].id).toBe('card-2');
-    expect(result.current.deck.convertedCards.get('card-1')).toBe('card-2');
+    const convertedEntry = result.current.deck.convertedCards.get('card-1');
+    expect(convertedEntry).toBeDefined();
+    if (typeof convertedEntry === 'object') {
+      expect(convertedEntry.convertedToId).toBe('card-2');
+      expect(convertedEntry.originalType).toBe('shared');
+      expect(convertedEntry.selectedHiramekiLevel).toBe(0);
+    }
   });
 
   it('should clear deck', () => {

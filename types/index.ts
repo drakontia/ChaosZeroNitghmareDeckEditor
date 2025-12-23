@@ -178,6 +178,15 @@ export interface CopiedCardEntry {
   isBasicCard?: boolean;
 }
 
+export interface ConvertedCardEntry {
+  convertedToId: string; // The target card ID it was converted to
+  originalType?: CardType; // Original card type before conversion
+  selectedHiramekiLevel?: number; // Hirameki level at conversion time
+  godHiramekiType?: GodType | null; // God hirameki at conversion time
+  godHiramekiEffectId?: string | null; // God effect at conversion time
+  isBasicCard?: boolean;
+}
+
 export interface Deck {
   name?: string;
   character: Character | null;
@@ -193,7 +202,7 @@ export interface Deck {
   // Tracking for Faint Memory calculation
   removedCards: Map<string, number | RemovedCardEntry>; // cardId -> removal count or snapshot entry
   copiedCards: Map<string, number | CopiedCardEntry>; // cardId -> copy count or snapshot entry
-  convertedCards: Map<string, string>; // originalCardId -> convertedCardId mapping
+  convertedCards: Map<string, string | ConvertedCardEntry>; // originalCardId -> convertedCardId or snapshot entry
 }
 
 
