@@ -42,26 +42,6 @@ export async function generateMetadata({
   return {
     title,
     description,
-    openGraph: {
-      title,
-      description,
-      type: 'website',
-      locale: locale,
-      images: [
-        {
-          url: `/deck/${shareId}/opengraph-image`,
-          width: 1200,
-          height: 630,
-          alt: `${deckName}${t('deck.shareImageAlt', { defaultValue: 'のデッキ画像' })}`,
-        },
-      ],
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title,
-      description,
-      images: [`/deck/${shareId}/opengraph-image`],
-    },
   };
 }
 
