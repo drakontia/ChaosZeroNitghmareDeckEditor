@@ -43,7 +43,7 @@ test.describe('Deck Editor', () => {
 
   test('should export deck image', async ({ page }) => {
     await page.goto('/');
-    const exportBtn = page.getByRole('button', { name: '画像エクスポート' });
+    const exportBtn = page.getByRole('button', { name: 'エクスポート' });
     await expect(exportBtn).toBeVisible();
 
     const downloadPromise = page.waitForEvent('download');
