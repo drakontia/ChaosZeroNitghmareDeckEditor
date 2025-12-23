@@ -1,7 +1,7 @@
 "use client";
 import { useTranslations } from 'next-intl';
 
-import { CznCard, CardType, Character } from "@/types";
+import { CznCard, CardType, Character, RemovedCardEntry } from "@/types";
 import { getCharacterHiramekiCards, getAddableCards, getCardById } from "@/lib/data";
 import { Card, CardContent } from "./ui/card";
 import { CardFrame } from "./CardFrame";
@@ -11,7 +11,7 @@ interface CardSelectorProps {
   character: Character | null;
   onAddCard: (card: CznCard) => void;
   onRestoreCard: (card: CznCard) => void;
-  removedCards?: Map<string, number>;
+  removedCards?: Map<string, number | RemovedCardEntry>;
   convertedCards?: Map<string, string>;
   presentHiramekiIds?: Set<string>;
   searchQuery?: string;
