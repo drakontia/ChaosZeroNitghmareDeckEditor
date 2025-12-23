@@ -182,8 +182,12 @@ export function calculateFaintMemory(deck: Deck): number {
     }
 
     // Attribute points for copied cards (snapshot-based)
+    // ONLY add these if the original card is NOT currently in the deck
+    // If original is in deck, its points are already counted in the deck.cards loop above
+    const originalCardInDeck = deck.cards.some(c => c.id === cardId);
+    
     const snapshot: CopiedCardEntry | null = typeof entry === "number" ? null : entry as CopiedCardEntry;
-    if (snapshot && count > 0) {
+    if (snapshot && count > 0 && !originalCardInDeck) {
       const cardType = snapshot.type;
       // Type acquisition points (per copy)
       if (cardType === CardType.SHARED) {

@@ -589,4 +589,216 @@ describe('calculateFaintMemory (snapshot attribute handling)', () => {
     // Original card preserved points: hirameki(10) = 10
     // Total: 10 + 0 + 10 = 20
     expect(calculateFaintMemory(deck)).toBe(20);
-  });});
+  });
+});
+
+describe('calculateFaintMemory (copy double-counting issue)', () => {
+  let deck: Deck;
+
+  beforeEach(() => {
+    deck = {
+      character: null,
+      equipment: { weapon: null, armor: null, pendant: null },
+      cards: [],
+      egoLevel: 0,
+      hasPotential: false,
+      createdAt: new Date(),
+      removedCards: new Map(),
+      copiedCards: new Map(),
+      convertedCards: new Map()
+    };
+  });
+
+  it('should NOT double-count points when original card remains in deck after copy', () => {
+    // Shared card with hirameki level 1 in deck
+    deck.cards = [
+      {
+        id: 'shared_01',
+        deckId: 'shared_01_original',
+        name: 'Shared Card',
+        type: CardType.SHARED,
+        category: CardCategory.ATTACK,
+        statuses: [],
+        selectedHiramekiLevel: 1,
+        godHiramekiType: null,
+        godHiramekiEffectId: null,
+        isBasicCard: false,
+        hiramekiVariations: [
+          {
+            level: 0,
+            cost: 5,
+            description: 'Base'
+          }
+        ]
+      }
+    ];
+
+    // Then copy it (card remains in deck, plus a copy is added)
+    deck.copiedCards.set('shared_01', {
+      count: 1,
+      type: CardType.SHARED,
+      selectedHiramekiLevel: 1,
+      godHiramekiType: null,
+      godHiramekiEffectId: null,
+      isBasicCard: false
+    });
+
+    // Expected calculation:
+    // Original card in deck: type(20) + hirameki(10) = 30
+    // Copy sequence: copy #1 = base 0
+    // Copy snapshot should NOT add type/hirameki points since original is still in deck
+    // Expected: 30 + 0 = 30
+    
+    const points = calculateFaintMemory(deck);
+    
+    // Fixed: Should not double-count when original is in deck
+    expect(points).toBe(30);
+  });
+
+  it('should count snapshot points only when copy is made AFTER removing original from deck', () => {
+    // Scenario: Card was copied while in deck with certain attributes, then original was removed
+    // In this case, we should count the snapshot attributes
+    
+    deck.cards = []; // Original card removed from deck
+
+    deck.copiedCards.set('shared_01', {
+      count: 1,
+      type: CardType.SHARED,
+      selectedHiramekiLevel: 1,
+      godHiramekiType: null,
+      godHiramekiEffectId: null,
+      isBasicCard: false
+    });
+
+    // Copy sequence: copy #1 = base 0
+    // Copy snapshot: type(20) + hirameki(10) = 30
+    // Total: 0 + 30 = 30
+    expect(calculateFaintMemory(deck)).toBe(30);
+  });
+
+  it('should NOT double-count when copy has different attributes than current deck card', () => {
+    // Card was copied at hirameki Lv1, then original was upgraded to Lv2
+    deck.cards = [
+      {
+        id: 'shared_01',
+        deckId: 'shared_01_original',
+        name: 'Shared Card',
+        type: CardType.SHARED,
+        category: CardCategory.ATTACK,
+        statuses: [],
+        selectedHiramekiLevel: 2, // Now at Lv2
+        godHiramekiType: null,
+        godHiramekiEffectId: null,
+        isBasicCard: false,
+        hiramekiVariations: [
+          {
+            level: 0,
+            cost: 5,
+            description: 'Base'
+          }
+        ]
+      }
+    ];
+
+    // Copy was made when card was at Lv1
+    deck.copiedCards.set('shared_01', {
+      count: 1,
+      type: CardType.SHARED,
+      selectedHiramekiLevel: 1, // Copied at Lv1
+      godHiramekiType: null,
+      godHiramekiEffectId: null,
+      isBasicCard: false
+    });
+
+    // Current deck card: type(20) + hirameki(10) = 30
+    // Copy sequence: copy #1 = base 0
+    // Copy snapshot should NOT be added since original is still in deck
+    // Expected: 30 + 0 = 30
+    
+    const points = calculateFaintMemory(deck);
+    
+    // Fixed: Should only count once even with different attributes
+    expect(points).toBe(30);
+  });
+
+  it('should handle multiple copies with original still in deck', () => {
+    // Original card in deck
+    deck.cards = [
+      {
+        id: 'monster_01',
+        deckId: 'monster_01_original',
+        name: 'Monster Card',
+        type: CardType.MONSTER,
+        category: CardCategory.ATTACK,
+        statuses: [],
+        selectedHiramekiLevel: 2,
+        godHiramekiType: GodType.KILKEN,
+        godHiramekiEffectId: 'godhirameki_1',
+        isBasicCard: false,
+        hiramekiVariations: [
+          {
+            level: 0,
+            cost: 5,
+            description: 'Base'
+          }
+        ]
+      }
+    ];
+
+    // Made 3 copies
+    deck.copiedCards.set('monster_01', {
+      count: 3,
+      type: CardType.MONSTER,
+      selectedHiramekiLevel: 2,
+      godHiramekiType: GodType.KILKEN,
+      godHiramekiEffectId: 'godhirameki_1',
+      isBasicCard: false
+    });
+
+    // Current deck card: type(80) + hirameki(10) + god(20) = 110
+    // Copy sequence: copy #1=0, #2=10, #3=30 = 40
+    // Copy snapshot should NOT be added since original is in deck
+    // Expected: 110 + 40 = 150
+    
+    const points = calculateFaintMemory(deck);
+    
+    // Fixed: snapshot should not add type/hirameki/god if original in deck
+    expect(points).toBe(150);
+  });
+
+  it('should handle undo copy correctly - removing copy should clear copiedCards entry', () => {
+    // This tests the interaction with useDeckBuilder's undoCard function
+    // When a copied card is undone, the copiedCards count should decrease
+    
+    // Original card in deck
+    deck.cards = [
+      {
+        id: 'shared_01',
+        deckId: 'shared_01_original',
+        name: 'Shared Card',
+        type: CardType.SHARED,
+        category: CardCategory.ATTACK,
+        statuses: [],
+        selectedHiramekiLevel: 1,
+        godHiramekiType: null,
+        godHiramekiEffectId: null,
+        isBasicCard: false,
+        hiramekiVariations: [
+          {
+            level: 0,
+            cost: 5,
+            description: 'Base'
+          }
+        ]
+      }
+    ];
+
+    // Copy was made and then undone (copiedCards should be empty/0)
+    // This represents the state AFTER undo
+    deck.copiedCards.clear();
+
+    // Only original card points should count
+    // type(20) + hirameki(10) = 30
+    expect(calculateFaintMemory(deck)).toBe(30);
+  });
+});
