@@ -45,6 +45,7 @@
     "totalCards": "カード枚数",
     "totalCost": "合計コスト",
     "noDeck": "デッキが空です",
+    "selectCharacterHint": "キャラクターを選択すると開始カードが表示されます",
     "namePlaceholder": "デッキ名",
     "createdDate": "作成日"
   },

@@ -45,6 +45,7 @@
     "totalCards": "卡牌数量",
     "totalCost": "总费用",
     "noDeck": "卡组为空",
+    "selectCharacterHint": "选择角色后会显示起始卡牌",
     "namePlaceholder": "卡组名称",
     "createdDate": "创建日期"
   },

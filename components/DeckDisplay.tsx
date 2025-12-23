@@ -34,7 +34,7 @@ export function DeckDisplay({ cards, egoLevel, hasPotential, allowedJob, onRemov
   if (cards.length === 0) {
     return (
       <Card className="border-dashed border-2 p-10 text-center text-muted-foreground">
-        キャラクターを選択すると開始カードが表示されます
+        {t('deck.selectCharacterHint')}
       </Card>
     );
   }

@@ -44,6 +44,7 @@
     "exportImageFailed": "Image export failed",
     "totalCards": "Card Count",
     "noDeck": "Deck is empty",
+    "selectCharacterHint": "Select a character to show starting cards",
     "namePlaceholder": "Deck Name",
     "createdDate": "Created"
   },

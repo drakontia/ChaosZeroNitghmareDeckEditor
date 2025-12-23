@@ -45,6 +45,7 @@
     "totalCards": "카드 수",
     "totalCost": "총 비용",
     "noDeck": "덱이 비어있습니다",
+    "selectCharacterHint": "캐릭터를 선택하면 시작 카드가 표시됩니다",
     "namePlaceholder": "덱 이름",
     "createdDate": "생성일"
   },
