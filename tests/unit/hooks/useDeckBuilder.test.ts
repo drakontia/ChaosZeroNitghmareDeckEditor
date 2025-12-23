@@ -235,7 +235,9 @@ describe('useDeckBuilder', () => {
 
     expect(result.current.deck.cards).toHaveLength(2);
     expect(result.current.deck.copiedCards.get('card-1')).toBe(1);
-    expect(result.current.deck.cards[1].isCopied).toBe(true);
+    const copied = result.current.deck.cards.find(card => card.isCopied);
+    expect(copied?.isCopied).toBe(true);
+    expect(copied?.copiedFromCardId).toBe('card-1');
   });
 
   it('should not copy basic cards', async () => {

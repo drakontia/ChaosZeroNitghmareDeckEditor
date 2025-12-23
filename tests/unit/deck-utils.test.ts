@@ -435,3 +435,89 @@ describe('calculateFaintMemory', () => {
     expect(calculateFaintMemory(baseDeck)).toBe(40); // 20 + 20
   });
 });
+
+describe('calculateFaintMemory (removed/copied attribute handling)', () => {
+  let deck: Deck;
+
+  beforeEach(() => {
+    deck = {
+      character: null,
+      equipment: { weapon: null, armor: null, pendant: null },
+      cards: [],
+      egoLevel: 0,
+      hasPotential: false,
+      createdAt: new Date(),
+      removedCards: new Map(),
+      copiedCards: new Map(),
+      convertedCards: new Map()
+    };
+  });
+
+  it('should NOT add shared/monster/god/hirameki points for removed cards (only sequence base points apply)', () => {
+    // 1st removal (shared): base 0
+    deck.removedCards.set('shared_01', 1);
+    expect(calculateFaintMemory(deck)).toBe(0);
+
+    // 1st + 2nd removal (shared + monster): 0 + 10 = 10
+    deck.removedCards.clear();
+    deck.removedCards.set('shared_01', 1);
+    deck.removedCards.set('monster_01', 1);
+    expect(calculateFaintMemory(deck)).toBe(10);
+
+    // Two removals of a shared card: 0 + 10 = 10
+    deck.removedCards.clear();
+    deck.removedCards.set('shared_01', 2);
+    expect(calculateFaintMemory(deck)).toBe(10);
+  });
+
+  it('should NOT add shared/monster/god/hirameki points for copied cards (only sequence base points apply)', () => {
+    // 1st copy (shared): base 0
+    deck.copiedCards.set('shared_01', 1);
+    expect(calculateFaintMemory(deck)).toBe(0);
+
+
+  it('should add attribute points for removed cards when snapshot provided', () => {
+    // Removed shared card with hirameki level 2 and god effect, count=2
+    deck.removedCards.set('shared_01', {
+      count: 2,
+      type: CardType.SHARED,
+      selectedHiramekiLevel: 2,
+      godHiramekiType: GodType.KILKEN,
+      godHiramekiEffectId: 'godhirameki_1',
+      isBasicCard: false
+    });
+
+    // Sequence base points: removal #1=0, #2=10 => 10
+    // Attribute points per removal: shared(20)+hirameki(10)+god(20)=50 -> 50*2=100
+    // Total expected: 10 + 100 = 110
+    expect(calculateFaintMemory(deck)).toBe(110);
+  });
+
+  it('should add attribute points for copied cards when snapshot provided', () => {
+    // Copied monster card with hirameki level 1, no god, count=3
+    deck.copiedCards.set('monster_01', {
+      count: 3,
+      type: CardType.MONSTER,
+      selectedHiramekiLevel: 1,
+      godHiramekiType: null,
+      godHiramekiEffectId: null,
+      isBasicCard: false
+    });
+
+    // Sequence base points: copy #1=0, #2=10, #3=30 => 40
+    // Attribute points per copy: monster(80)+hirameki(10)=90 -> 90*3=270
+    // Total expected: 40 + 270 = 310
+    expect(calculateFaintMemory(deck)).toBe(310);
+  });
+    // 1st + 2nd copy (shared + monster): 0 + 10 = 10
+    deck.copiedCards.clear();
+    deck.copiedCards.set('shared_01', 1);
+    deck.copiedCards.set('monster_01', 1);
+    expect(calculateFaintMemory(deck)).toBe(10);
+
+    // Two copies of a shared card: 0 + 10 = 10
+    deck.copiedCards.clear();
+    deck.copiedCards.set('shared_01', 2);
+    expect(calculateFaintMemory(deck)).toBe(10);
+  });
+});

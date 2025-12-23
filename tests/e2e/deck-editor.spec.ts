@@ -11,19 +11,16 @@ const selectCharacterAndWeapon = async (page: Page) => {
 };
 
 const addFirstHiramekiCard = async (page: Page) => {
-  const hiramekiSection = page.getByRole('heading', { name: 'ヒラメキカード' }).locator('..');
-  const hiramekiGrid = hiramekiSection.locator('.grid');
-  const firstCard = hiramekiGrid.locator('div[title]').first();
-  const cardName = await firstCard.getAttribute('title');
-  await firstCard.click();
-  return cardName ?? '';
+  // Use a stable card name that exists in fixtures
+  const defaultName = '黄昏の結束';
+  return addHiramekiCardByName(page, defaultName);
 };
 
 const addHiramekiCardByName = async (page: Page, cardName: string) => {
   const hiramekiSection = page.getByRole('heading', { name: 'ヒラメキカード' }).locator('..');
-  const target = hiramekiSection.locator(`div[title="${cardName}"]`).first();
+  const target = hiramekiSection.getByText(cardName, { exact: true }).first();
   await expect(target).toBeVisible();
-  await target.click();
+  await target.click({ timeout: 10_000 });
   return cardName;
 };
 
@@ -33,7 +30,7 @@ const openAccordion = async (page: Page, name: string) => {
 };
 
 const getDeckCardContainerByName = (page: Page, cardName: string) => {
-  const nameLocator = page.locator(`div[title="${cardName}"]`).first();
+  const nameLocator = page.getByText(cardName, { exact: true }).first();
   // Climb to the nearest ancestor that also contains the menu button
   return nameLocator.locator('xpath=ancestor::div[.//button[@aria-label="メニュー"]][1]');
 };
@@ -87,39 +84,37 @@ test.describe('Deck Editor', () => {
   test('should change card hirameki state and update description to selected level', async ({ page }) => {
     await page.goto('/');
     await selectCharacterAndWeapon(page);
-    const cardName = await addFirstHiramekiCard(page);
-    // Try to find hirameki button within the card context; skip if not present
-    const hiramekiBtn = page.getByRole('button', { name: 'ヒラメキ' }).filter({ has: page.locator(`div[title="${cardName}"]`) }).first();
-    const btnCount = await hiramekiBtn.count();
-    if (btnCount === 0) {
-      test.skip(true, 'ヒラメキボタンが存在しないカードのためスキップ');
-      return;
-    }
+    const cardName = await addHiramekiCardByName(page, '月読');
+    const deckCard = getDeckCardContainerByName(page, cardName);
+    const hiramekiBtn = deckCard.getByRole('button', { name: 'ヒラメキ', exact: true });
+    await expect(hiramekiBtn).toBeVisible();
     await hiramekiBtn.click();
 
     // Capture Lv1 description text from the modal preview, then select it
     const lv1Tile = page.locator('[title="Lv1"]').first();
     const lv1Text = await lv1Tile.innerText();
+    const lv1Lines = lv1Text
+      .split('\n')
+      .map((line) => line.trim())
+      .filter(Boolean);
     await lv1Tile.click();
 
     // Verify hirameki button indicates active state
     await expect(hiramekiBtn).toHaveClass(/bg-yellow-400/);
 
-    // Verify deck card description contains the Lv1 preview text
-    const deckCard = getDeckCardContainerByName(page, cardName);
-    await expect(deckCard).toContainText(lv1Text);
+    // Verify deck card description contains the Lv1 preview text lines
+    for (const line of lv1Lines) {
+      await expect(deckCard).toContainText(line);
+    }
   });
 
   test('should change card to god hirameki state and show localized effect with correct cost', async ({ page }) => {
     await page.goto('/');
     await selectCharacterAndWeapon(page);
     const cardName = await addFirstHiramekiCard(page);
-    const godBtn = page.getByRole('button', { name: '神ヒラメキ選択' }).filter({ has: page.locator(`div[title="${cardName}"]`) }).first();
-    const godCount = await godBtn.count();
-    if (godCount === 0) {
-      test.skip(true, '神ヒラメキボタンが存在しないカードのためスキップ');
-      return;
-    }
+    const deckCard = getDeckCardContainerByName(page, cardName);
+    const godBtn = deckCard.getByRole('button', { name: '神ヒラメキ選択', exact: true });
+    await expect(godBtn).toBeVisible();
     await godBtn.click();
 
     // Choose a god in the horizontal group, then pick first effect preview
@@ -128,6 +123,7 @@ test.describe('Deck Editor', () => {
     await kilkenBtn.first().click();
     const effectTile = dialog.locator('button[title]').first();
     const effectText = await effectTile.innerText();
+    const effectSnippet = effectText.split('\n')[0]?.trim();
     const tileCostMatch = effectText.match(/\b(\d+)\b/);
     const expectedCost = tileCostMatch ? parseInt(tileCostMatch[1], 10) : undefined;
     await effectTile.click();
@@ -136,8 +132,9 @@ test.describe('Deck Editor', () => {
     await expect(godBtn).toHaveClass(/bg-yellow-400/);
 
     // Verify localized god effect text appears under the card description
-    const deckCard = getDeckCardContainerByName(page, cardName);
-    await expect(deckCard.getByText('攻撃時、追加ダメージを与える')).toBeVisible();
+    if (effectSnippet) {
+      await expect(deckCard).toContainText(effectSnippet);
+    }
 
     // Verify the deck card cost matches the effect preview cost
     if (expectedCost !== undefined) {
@@ -154,12 +151,10 @@ test.describe('Deck Editor', () => {
     const cardName = await addFirstHiramekiCard(page);
 
     // Remove the card
-    const deleteBtn = page.getByRole('button', { name: '削除' }).filter({ has: page.locator(`div[title="${cardName}"]`) }).first();
-    const delCount = await deleteBtn.count();
-    if (delCount === 0) {
-      test.skip(true, '削除ボタンが見つからないためスキップ');
-      return;
-    }
+    const deckCard = getDeckCardContainerByName(page, cardName);
+    await deckCard.getByRole('button', { name: 'メニュー' }).click();
+    const deleteBtn = page.getByRole('button', { name: '削除', exact: true });
+    await expect(deleteBtn).toBeVisible();
     await deleteBtn.click();
 
     // Verify card is removed
@@ -185,13 +180,16 @@ test.describe('Deck Editor', () => {
     await addFirstHiramekiCard(page);
 
     await openAccordion(page, '共用カード');
-    await page.locator('div[title="全体攻撃"]').first().click();
+    const sharedSection = page.getByRole('heading', { name: '共用カード' }).locator('..');
+    await sharedSection.getByText('加虐性', { exact: true }).first().click({ timeout: 10_000 });
 
     await openAccordion(page, 'モンスターカード');
-    await page.locator('div[title="モンスター召喚"]').first().click();
+    const monsterSection = page.getByRole('heading', { name: 'モンスターカード' }).locator('..');
+    await monsterSection.getByText('恥ずかしがり屋の庭師', { exact: true }).first().click({ timeout: 10_000 });
 
     await openAccordion(page, '禁忌カード');
-    await page.locator('div[title="禁呪"]').first().click();
+    const forbiddenSection = page.getByRole('heading', { name: '禁忌カード' }).locator('..');
+    await forbiddenSection.getByText('禁じられたアルゴリズム', { exact: true }).first().click({ timeout: 10_000 });
 
     // Verify deck total now equals 8 (4 start + 4 added)
     await expect(page.getByTestId('total-cards')).toContainText('8');
@@ -237,11 +235,11 @@ test.describe('Deck Editor', () => {
     await deckCard.getByRole('button', { name: '変換' }).click();
 
     // Pick a shared card from the conversion modal
-    const targetName = '全体攻撃';
+    const targetName = '加虐性';
     const dialog = page.getByRole('dialog');
-    const targetTile = dialog.locator(`div[title="${targetName}"]`).first();
+    const targetTile = dialog.getByText(targetName, { exact: true }).first();
     await expect(targetTile).toBeVisible();
-    await targetTile.click();
+    await targetTile.click({ timeout: 10_000 });
 
     // Deck should now show the converted target card (with actions menu available)
     const convertedDeckCard = getDeckCardContainerByName(page, targetName);
@@ -259,6 +257,33 @@ test.describe('Deck Editor', () => {
     const restoredDeckCard = getDeckCardContainerByName(page, originalName);
     await expect(restoredDeckCard.getByRole('button', { name: 'メニュー' })).toBeVisible();
     await expect(convertedSection.locator(`div[title="${originalName}"]`)).toHaveCount(0);
+  });
+
+  test('should copy a card via actions menu', async ({ page }) => {
+    await page.goto('/');
+    await selectCharacterAndWeapon(page);
+
+    const cardName = '加虐性';
+    await openAccordion(page, '共用カード');
+    const sharedSection = page.getByRole('heading', { name: '共用カード' }).locator('..');
+    await sharedSection.getByText(cardName, { exact: true }).first().click({ timeout: 10_000 });
+
+    // Copy the card from its actions menu
+    const deckCard = getDeckCardContainerByName(page, cardName);
+    const copies = page
+      .getByText(cardName, { exact: true })
+      .locator('xpath=ancestor::div[.//button[@aria-label="メニュー"]][1]');
+    const countBefore = await copies.count();
+    const totalText = await page.getByTestId('total-cards').innerText();
+    const totalBefore = parseInt(totalText.replace(/[^0-9]/g, ''), 10);
+    await deckCard.getByRole('button', { name: 'メニュー' }).click();
+    const copyBtn = page.getByRole('button', { name: 'コピー', exact: true });
+    await expect(copyBtn).toBeVisible();
+    await copyBtn.click();
+
+    // Copies increase by 1 and total card count increments accordingly
+    await expect.poll(async () => copies.count()).toBe(countBefore + 1);
+    await expect(page.getByTestId('total-cards')).toContainText(String(totalBefore + 1));
   });
 
   test('should copy share URL and load shared deck', async ({ page }) => {

@@ -1,4 +1,4 @@
-import { CardType, DeckCard, Deck, CardStatus, CardCategory } from "@/types";
+import { CardType, DeckCard, Deck, CardStatus, CardCategory, RemovedCardEntry, CopiedCardEntry } from "@/types";
 import { GOD_HIRAMEKI_EFFECTS } from "@/lib/god-hirameki";
 import { getCardById } from "@/lib/data";
 
@@ -64,34 +64,35 @@ export function calculateFaintMemory(deck: Deck): number {
 
   // Points for cards in the deck
   for (const card of deck.cards) {
-    // Character cards: 0pt (base cards, no points)
-    if (card.type === CardType.CHARACTER) {
-      continue;
+    // Character cards: base cards do not add points.
+    // Collect God Hirameki state once and handle uniformly for all types.
+    const hasGodHirameki = (card.godHiramekiType && card.godHiramekiEffectId && !card.isBasicCard);
+
+    // Non-character cards receive base acquisition and hirameki points
+    if (card.type !== CardType.CHARACTER) {
+      // Shared card acquisition: +20pt
+      if (card.type === CardType.SHARED) {
+        points += 20;
+      }
+      
+      // Monster card acquisition: +80pt
+      if (card.type === CardType.MONSTER) {
+        points += 80;
+      }
+
+      // Forbidden card: +20pt (always saved)
+      if (card.type === CardType.FORBIDDEN) {
+        points += 20;
+      }
+
+      // Hirameki on shared/monster cards: +10pt (character cards are 0pt)
+      if ((card.type === CardType.SHARED || card.type === CardType.MONSTER) && card.selectedHiramekiLevel > 0) {
+        points += 10;
+      }
     }
     
-    // Shared card acquisition: +20pt
-    if (card.type === CardType.SHARED) {
-      points += 20;
-    }
-    
-    // Monster card acquisition: +80pt
-    if (card.type === CardType.MONSTER) {
-      points += 80;
-    }
-
-    // Forbidden card: +20pt (always saved)
-    if (card.type === CardType.FORBIDDEN) {
-      points += 20;
-    }
-
-    // Hirameki on shared/monster cards: +10pt (character cards are 0pt)
-    if ((card.type === CardType.SHARED || card.type === CardType.MONSTER) && card.selectedHiramekiLevel > 0) {
-      points += 10;
-    }
-
-    // God Hirameki: +20pt (for all cards including character cards)
-    // If shared/monster, also add the +10pt from hirameki above
-    if (card.godHiramekiType) {
+    // God Hirameki: +20pt (uniformly applied after type-specific points)
+    if (hasGodHirameki) {
       points += 20;
     }
   }
@@ -99,8 +100,9 @@ export function calculateFaintMemory(deck: Deck): number {
   // Points for removed cards
   // Calculate removal points based on sequential removal order across all cards
   let removalIndex = 0;
-  for (const [cardId, count] of deck.removedCards.entries()) {
+  for (const [cardId, entry] of deck.removedCards.entries()) {
     const removedCard = getCardById(cardId);
+    const count = typeof entry === "number" ? entry : (entry.count ?? 0);
     // Check if card is character type by card data
     const isCharacter = removedCard?.type === CardType.CHARACTER;
 
@@ -129,12 +131,35 @@ export function calculateFaintMemory(deck: Deck): number {
         points += basePoints;
       }
     }
+
+    // Attribute points for removed cards (optional snapshot-based)
+    const snapshot: RemovedCardEntry | null = typeof entry === "number" ? null : entry as RemovedCardEntry;
+    if (snapshot && count > 0) {
+      const cardType = snapshot.type ?? removedCard?.type;
+      // Type acquisition points
+      if (cardType === CardType.SHARED) {
+        points += 20 * count;
+      } else if (cardType === CardType.MONSTER) {
+        points += 80 * count;
+      } else if (cardType === CardType.FORBIDDEN) {
+        points += 20 * count;
+      }
+      // Hirameki points for shared/monster
+      if ((cardType === CardType.SHARED || cardType === CardType.MONSTER) && (snapshot.selectedHiramekiLevel ?? 0) > 0) {
+        points += 10 * count;
+      }
+      // God hirameki points
+      if (snapshot.godHiramekiType && snapshot.godHiramekiEffectId && !snapshot.isBasicCard) {
+        points += 20 * count;
+      }
+    }
   }
 
   // Points for copied cards
   // Calculate copy points based on sequential copy order across all cards
   let copyIndex = 0;
-  for (const [cardId, count] of deck.copiedCards.entries()) {
+  for (const [cardId, entry] of deck.copiedCards.entries()) {
+    const count = typeof entry === "number" ? entry : (entry.count ?? 0);
     // Apply points for each copy of this card
     for (let i = 0; i < count; i++) {
       copyIndex++;
@@ -154,6 +179,29 @@ export function calculateFaintMemory(deck: Deck): number {
       }
       
       points += basePoints;
+    }
+
+    // Attribute points for copied cards (optional snapshot-based)
+    const snapshot: CopiedCardEntry | null = typeof entry === "number" ? null : entry as CopiedCardEntry;
+    if (snapshot && count > 0) {
+      const copiedCard = getCardById(cardId);
+      const cardType = snapshot.type ?? copiedCard?.type;
+      // Type acquisition points
+      if (cardType === CardType.SHARED) {
+        points += 20 * count;
+      } else if (cardType === CardType.MONSTER) {
+        points += 80 * count;
+      } else if (cardType === CardType.FORBIDDEN) {
+        points += 20 * count;
+      }
+      // Hirameki points for shared/monster
+      if ((cardType === CardType.SHARED || cardType === CardType.MONSTER) && (snapshot.selectedHiramekiLevel ?? 0) > 0) {
+        points += 10 * count;
+      }
+      // God hirameki points
+      if (snapshot.godHiramekiType && snapshot.godHiramekiEffectId && !snapshot.isBasicCard) {
+        points += 20 * count;
+      }
     }
   }
 

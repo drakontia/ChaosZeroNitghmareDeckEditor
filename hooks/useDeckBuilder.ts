@@ -112,7 +112,8 @@ export function useDeckBuilder(initialDeck?: Deck) {
 
       // Update removedCards count
       const newRemovedCards = new Map(prev.removedCards);
-      const currentCount = newRemovedCards.get(cardToRemove.id) || 0;
+      const entry = newRemovedCards.get(cardToRemove.id);
+      const currentCount = typeof entry === 'number' ? entry : (entry?.count || 0);
       newRemovedCards.set(cardToRemove.id, currentCount + 1);
 
       return {
@@ -202,7 +203,8 @@ export function useDeckBuilder(initialDeck?: Deck) {
       // If this is a copied card, decrement the copy count
       if (cardToUndo.isCopied) {
         const newCopiedCards = new Map(prev.copiedCards);
-        const currentCount = newCopiedCards.get(cardToUndo.id) || 0;
+        const entry = newCopiedCards.get(cardToUndo.id);
+        const currentCount = typeof entry === 'number' ? entry : (entry?.count || 0);
         if (currentCount > 1) {
           newCopiedCards.set(cardToUndo.id, currentCount - 1);
         } else {
@@ -244,12 +246,14 @@ export function useDeckBuilder(initialDeck?: Deck) {
       const copiedCard: DeckCard = {
         ...cardToCopy,
         deckId: `${cardToCopy.id}_copy_${Date.now()}_${Math.random()}`,
-        isCopied: true
+        isCopied: true,
+        copiedFromCardId: cardToCopy.copiedFromCardId ?? cardToCopy.id
       };
 
       // Track in copiedCards Map
       const newCopiedCards = new Map(prev.copiedCards);
-      const currentCount = newCopiedCards.get(cardToCopy.id) || 0;
+      const entry = newCopiedCards.get(cardToCopy.id);
+      const currentCount = typeof entry === 'number' ? entry : (entry?.count || 0);
       newCopiedCards.set(cardToCopy.id, currentCount + 1);
 
       return {

@@ -34,6 +34,8 @@ describe('deck-share', () => {
           godHiramekiType: null,
           godHiramekiEffectId: null,
           isBasicCard: false,
+          isCopied: true,
+          copiedFromCardId: 'shared_card_1',
           hiramekiVariations: [
             { level: 0, cost: 5, description: '敵全体に無属性ダメージを与える' }
           ]
@@ -62,6 +64,16 @@ describe('deck-share', () => {
       const encoded = encodeDeckShare(mockDeck);
       // The encoded string should be decodable
       expect(() => decodeDeckShare(encoded)).not.toThrow();
+    });
+
+    it('should encode deck names with special characters', () => {
+      const specialDeck = {
+        ...mockDeck,
+        name: 'デッキ with !@#$% characters'
+      };
+
+      const encoded = encodeDeckShare(specialDeck);
+      expect(encoded).not.toMatch(/[+/=]/);
     });
 
     it('should handle empty deck', () => {
@@ -101,6 +113,7 @@ describe('deck-share', () => {
 
       expect(decoded!.cards).toHaveLength(1);
       expect(decoded!.cards[0].id).toBe('shared_card_1');
+      expect(decoded!.cards[0].copiedFromCardId).toBe('shared_card_1');
     });
 
     it('should preserve equipment data', () => {

@@ -156,6 +156,26 @@ export interface DeckCard extends CznCard {
   godHiramekiType: GodType | null; // Which god's hirameki is applied (null = none)
   godHiramekiEffectId: string | null; // Which specific effect of that god is applied
   isCopied?: boolean; // True if this is a copied card
+  copiedFromCardId?: string; // Original card id this copy was created from
+}
+
+// Removal/Copy snapshot entries to preserve attributes at action time
+export interface RemovedCardEntry {
+  count: number;
+  type?: CardType; // Optional: card type at removal
+  selectedHiramekiLevel?: number;
+  godHiramekiType?: GodType | null;
+  godHiramekiEffectId?: string | null;
+  isBasicCard?: boolean;
+}
+
+export interface CopiedCardEntry {
+  count: number;
+  type?: CardType; // Optional: card type at copy time
+  selectedHiramekiLevel?: number;
+  godHiramekiType?: GodType | null;
+  godHiramekiEffectId?: string | null;
+  isBasicCard?: boolean;
 }
 
 export interface Deck {
@@ -170,9 +190,9 @@ export interface Deck {
   egoLevel: number; // 0-6, Ego Manifestation level
   hasPotential: boolean; // Whether potential is active
   createdAt: Date; // Deck creation date
-  // Tracking for Vague Memory calculation
-  removedCards: Map<string, number>; // cardId -> removal count
-  copiedCards: Map<string, number>; // cardId -> copy count
+  // Tracking for Faint Memory calculation
+  removedCards: Map<string, number | RemovedCardEntry>; // cardId -> removal count or snapshot entry
+  copiedCards: Map<string, number | CopiedCardEntry>; // cardId -> copy count or snapshot entry
   convertedCards: Map<string, string>; // originalCardId -> convertedCardId mapping
 }
 

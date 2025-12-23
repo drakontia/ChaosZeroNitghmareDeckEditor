@@ -7,6 +7,7 @@ interface SharedDeckCard {
   godHiramekiType?: DeckCard["godHiramekiType"];
   godHiramekiEffectId?: DeckCard["godHiramekiEffectId"];
   isCopied?: boolean;
+  copiedFromCardId?: string;
 }
 
 interface SharedDeckPayload {
@@ -93,12 +94,21 @@ export function encodeDeckShare(deck: Deck): string {
       ...(card.godHiramekiType && { godHiramekiType: card.godHiramekiType }),
       ...(card.godHiramekiEffectId && { godHiramekiEffectId: card.godHiramekiEffectId }),
       ...(card.isCopied && { isCopied: card.isCopied }),
+      ...(card.copiedFromCardId && { copiedFromCardId: card.copiedFromCardId }),
     })),
     ...(deck.egoLevel && { ego: deck.egoLevel }),
     ...(deck.hasPotential && { pot: deck.hasPotential }),
     ct: deck.createdAt.toISOString(),
-    ...(deck.removedCards.size && { rm: Array.from(deck.removedCards.entries()) }),
-    ...(deck.copiedCards.size && { cp: Array.from(deck.copiedCards.entries()) }),
+    ...(deck.removedCards.size && { 
+      rm: Array.from(deck.removedCards.entries()).map(([id, entry]) => 
+        [id, typeof entry === 'number' ? entry : entry.count] as [string, number]
+      )
+    }),
+    ...(deck.copiedCards.size && { 
+      cp: Array.from(deck.copiedCards.entries()).map(([id, entry]) => 
+        [id, typeof entry === 'number' ? entry : entry.count] as [string, number]
+      )
+    }),
     ...(deck.convertedCards.size && { cv: Array.from(deck.convertedCards.entries()) }),
   };
 
@@ -116,6 +126,7 @@ const toDeckCard = (card: CznCard, shared: SharedDeckCard): DeckCard => {
     godHiramekiType: shared.godHiramekiType ?? null,
     godHiramekiEffectId: shared.godHiramekiEffectId ?? null,
     isCopied: shared.isCopied,
+    copiedFromCardId: shared.copiedFromCardId,
   };
 };
 
