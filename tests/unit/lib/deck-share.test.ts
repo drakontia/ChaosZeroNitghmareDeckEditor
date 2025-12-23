@@ -25,7 +25,7 @@ describe('deck-share', () => {
       cards: [
         {
           deckId: 'deck-1',
-          id: 'shared_card_1',
+          id: 'shared_01',
           name: '全体攻撃',
           type: CardType.SHARED,
           category: CardCategory.ATTACK,
@@ -35,7 +35,7 @@ describe('deck-share', () => {
           godHiramekiEffectId: null,
           isBasicCard: false,
           isCopied: true,
-          copiedFromCardId: 'shared_card_1',
+          copiedFromCardId: 'shared_01',
           hiramekiVariations: [
             { level: 0, cost: 5, description: '敵全体に無属性ダメージを与える' }
           ]
@@ -45,7 +45,7 @@ describe('deck-share', () => {
       hasPotential: true,
       createdAt: new Date('2024-01-01T12:00:00Z'),
       removedCards: new Map([['removed-1', 2]]),
-      copiedCards: new Map([['shared_card_1', 1]]),
+      copiedCards: new Map([['shared_01', 1]]),
       convertedCards: new Map([['original-1', 'converted-1']])
     };
   });
@@ -112,8 +112,8 @@ describe('deck-share', () => {
       const decoded = decodeDeckShare(encoded);
 
       expect(decoded!.cards).toHaveLength(1);
-      expect(decoded!.cards[0].id).toBe('shared_card_1');
-      expect(decoded!.cards[0].copiedFromCardId).toBe('shared_card_1');
+      expect(decoded!.cards[0].id).toBe('shared_01');
+      expect(decoded!.cards[0].copiedFromCardId).toBe('shared_01');
     });
 
     it('should preserve equipment data', () => {
@@ -129,7 +129,7 @@ describe('deck-share', () => {
       const decoded = decodeDeckShare(encoded);
 
       expect(decoded!.removedCards.get('removed-1')).toBe(2);
-      expect(decoded!.copiedCards.get('shared_card_1')).toBe(1);
+      expect(decoded!.copiedCards.get('shared_01')).toBe(1);
       expect(decoded!.convertedCards.get('original-1')).toBe('converted-1');
     });
 
@@ -169,14 +169,14 @@ describe('deck-share', () => {
         ...mockDeck.cards,
         {
           deckId: 'deck-2',
-          id: 'monster_card_1',
+          id: 'monster_01',
           name: 'モンスター召喚',
           type: CardType.MONSTER,
           category: CardCategory.SKILL,
           statuses: [],
-          selectedHiramekiLevel: 1,
+          selectedHiramekiLevel: 0,
           godHiramekiType: 'kilken' as GodType,
-          godHiramekiEffectId: 'effect-1',
+          godHiramekiEffectId: 'kilken_01',
           isBasicCard: false,
           hiramekiVariations: [
             { level: 0, cost: 4, description: 'モンスターを召喚して攻撃' }
@@ -188,8 +188,9 @@ describe('deck-share', () => {
       const decoded = decodeDeckShare(encoded);
 
       expect(decoded!.cards).toHaveLength(2);
-      expect(decoded!.cards[1].selectedHiramekiLevel).toBe(1);
+      expect(decoded!.cards[1].selectedHiramekiLevel).toBe(0);
       expect(decoded!.cards[1].godHiramekiType).toBe('kilken' as GodType);
+      expect(decoded!.cards[1].godHiramekiEffectId).toBe('kilken_01');
     });
 
     it('should handle high ego levels', () => {

@@ -90,7 +90,7 @@ export function encodeDeckShare(deck: Deck): string {
     },
     k: deck.cards.map((card) => ({
       id: card.id,
-      ...(card.selectedHiramekiLevel && { selectedHiramekiLevel: card.selectedHiramekiLevel }),
+      ...(card.selectedHiramekiLevel !== undefined && { selectedHiramekiLevel: card.selectedHiramekiLevel }),
       ...(card.godHiramekiType && { godHiramekiType: card.godHiramekiType }),
       ...(card.godHiramekiEffectId && { godHiramekiEffectId: card.godHiramekiEffectId }),
       ...(card.isCopied && { isCopied: card.isCopied }),
@@ -109,7 +109,11 @@ export function encodeDeckShare(deck: Deck): string {
         [id, typeof entry === 'number' ? entry : entry.count] as [string, number]
       )
     }),
-    ...(deck.convertedCards.size && { cv: Array.from(deck.convertedCards.entries()) }),
+    ...(deck.convertedCards.size && { 
+      cv: Array.from(deck.convertedCards.entries()).map(([id, entry]) => 
+        [id, typeof entry === 'string' ? entry : entry.convertedToId] as [string, string]
+      )
+    }),
   };
 
   const json = JSON.stringify(payload);
