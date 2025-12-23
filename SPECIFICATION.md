@@ -122,7 +122,7 @@
 
 3種類のカテゴリ:
 - **攻撃（Attack）**
-- **強化（Enhancement）**
+- **強化（Upgrade）**
 - **スキル（Skill）**
 
 ### カードステータス（Status）
@@ -131,14 +131,24 @@
 
 | ステータス | 日本語 | 英語 |
 |------------|--------|------|
-| opening | 開戦 | Opening |
-| extinction | 消滅 | Extinction |
-| preservation | 保存 | Preservation |
-| recovery | 回収 | Recovery |
+| initiation | 開戦 | Initiation |
+| retain | 保存 | Retain |
 | celestial | 天上 | Celestial |
-| coordination | 連携 | Coordination |
-| ultimate | 終極 | Ultimate |
-| initiative | 主導 | Initiative |
+| combo | 連携 | Combo |
+| exhaust | 消滅 | Exhaust |
+| exhaust2 | 消滅2 | Exhaust2 |
+| exhaust3 | 消滅3 | Exhaust3 |
+| lead | 主導 | Lead |
+| unique | 唯一 | Unique |
+| haste | 迅速 | Haste |
+| finale | 終極 | Finale |
+| retrieve | 回収 | Retrieve |
+| retrieve2 | 回収2 | Retrieve2 |
+| retrieve3 | 回収3 | Retrieve3 |
+| bullet | 弾丸 | Bullet |
+| weakness_attack | 弱点攻撃 | Weakness Attack |
+| pulverize | 粉砕 | Pulverize |
+| bind | 結束 | Bind |
 
 ### ヒラメキシステム
 
@@ -251,24 +261,49 @@
 
 ### ポイント計算ルール
 
+#### デッキ内カード
+
 | 行動 | ポイント | 備考 |
 |------|----------|------|
-| 共用カードの獲得 | +20pt | - |
-| モンスターカードの獲得 | +80pt | - |
-| 共用・モンスターカードのヒラメキ | +10pt | 固有カードのヒラメキは0pt |
-| 神ヒラメキ（全カード） | +20pt | 共用・モンスターの場合は上記ヒラメキ+10ptも加算 |
-| 禁忌カード | +20pt | 100%セーブデータに保存される |
-| カードの排除（1回目） | 0pt | 開始・ヒラメキカードは+20pt<br>【排除】ステータス持ちカードは計算に含まれない |
-| カードの排除（2回目） | +10pt | - |
-| カードの排除（3回目） | +30pt | - |
-| カードの排除（4回目） | +50pt | - |
-| カードの排除（5回目以降） | +70pt | - |
-| カードのコピー（1回目） | 0pt | コピー元の神ヒラメキなどのpt加算要素も継承 |
-| カードのコピー（2回目） | +10pt | - |
-| カードのコピー（3回目） | +30pt | - |
-| カードのコピー（4回目） | +50pt | - |
-| カードのコピー（5回目以降） | +70pt | - |
-| カードの変換 | +10pt | 変換後のカードがpt加算要素を持つ場合は追加で加算<br>変換後のカードを排除しても変換のptは残る |
+| 共用カードの獲得 | +20pt | キャラカード以外 |
+| モンスターカードの獲得 | +80pt | キャラカード以外 |
+| 禁忌カード | +20pt | キャラカード以外 |
+| 共用・モンスターカードのヒラメキ（Lv1以上） | +10pt | キャラカードのヒラメキは0pt |
+| 神ヒラメキ（全カード、基本カード除く） | +20pt | ヒラメキ対応カードのみ。共用・モンスターの場合は上記+10ptも加算 |
+
+#### 削除されたカード
+
+| 回数 | ポイント | 備考 |
+|------|----------|------|
+| 1回目 | 0pt | キャラカードは+20pt追加 |
+| 2回目 | +10pt | キャラカードは+20pt追加 |
+| 3回目 | +30pt | キャラカードは+20pt追加 |
+| 4回目 | +50pt | キャラカードは+20pt追加 |
+| 5回目以降 | +70pt | キャラカードは+20pt追加 |
+
+削除時のカード属性（種別・ヒラメキ・神ヒラメキ）は削除時点の状態がスナップショット保存され、加算される。
+
+#### コピーされたカード
+
+| 回数 | ポイント | 備考 |
+|------|----------|------|
+| 1回目 | 0pt | コピー元の属性（種別・ヒラメキ・神ヒラメキ）を継承 |
+| 2回目 | +10pt | - |
+| 3回目 | +30pt | - |
+| 4回目 | +50pt | - |
+| 5回目以降 | +70pt | - |
+
+コピー時のカード属性（種別・ヒラメキ・神ヒラメキ）はコピー時点の状態がスナップショット保存され、加算される。
+
+#### 変換されたカード
+
+| 行動 | ポイント | 備考 |
+|------|----------|------|
+| カードの変換 | +10pt | 基本変換コスト |
+| 元カードの属性保持 | 状況次第 | 変換前のヒラメキ・神ヒラメキポイントは保持される |
+| 変換先カードの属性 | 状況次第 | 変換後のカードがデッキにある場合、通常通り加算 |
+
+変換時の元カード属性（種別・ヒラメキ・神ヒラメキ）はスナップショット保存される。変換後のカードがデッキから削除されても、元カードと変換の+10ptは残る。
 
 ### UI表示
 
@@ -332,7 +367,7 @@ enum CardType {
 // カードカテゴリ
 enum CardCategory {
   ATTACK = "attack",
-  ENHANCEMENT = "enhancement",
+  UPGRADE = "upgrade",
   SKILL = "skill"
 }
 
@@ -363,19 +398,19 @@ enum GodType {
   VITOL = "vitol"
 }
 
-// 神ヒラメキ効果オプション
+// 神ヒラメキ効果オプション（単一効果）
 interface GodHiramekiEffectOption {
   id: string;
-  name: string;
   additionalEffect: string;
   costModifier?: number;
 }
 
-// 神ヒラメキ定義
+// 神ヒラメキ定義（統一構造）
 interface GodHiramekiDefinition {
-  god: GodType;
-  name: string;
-  effects: GodHiramekiEffectOption[];
+  id: string;              // 効果ID（i18nキーに対応）
+  additionalEffect: string; // フォールバック説明
+  costModifier?: number;   // コスト修正
+  gods: GodType[] | "all"; // 適用可能な神（配列または"all"）
 }
 
 // カード
@@ -400,6 +435,7 @@ interface DeckCard extends Card {
 
 // デッキ
 interface Deck {
+  name?: string;
   character: Character | null;
   equipment: {
     weapon: Equipment | null;
@@ -409,9 +445,39 @@ interface Deck {
   cards: DeckCard[];
   egoLevel: number; // 0-6
   hasPotential: boolean;
-  removedCards: Map<string, number>;
-  copiedCards: Map<string, number>;
-  convertedCards: Set<string>;
+  createdAt: Date;
+  // 曖昧な記憶計算用のトラッキング（スナップショット対応）
+  removedCards: Map<string, number | RemovedCardEntry>; // カードID → 削除回数 or スナップショット
+  copiedCards: Map<string, number | CopiedCardEntry>;   // カードID → コピー回数 or スナップショット
+  convertedCards: Map<string, string | ConvertedCardEntry>; // 元カードID → 変換先カードID or スナップショット
+}
+
+// スナップショット型（削除/コピー/変換時の属性保持）
+interface RemovedCardEntry {
+  count: number;
+  type?: CardType;
+  selectedHiramekiLevel?: number;
+  godHiramekiType?: GodType | null;
+  godHiramekiEffectId?: string | null;
+  isBasicCard?: boolean;
+}
+
+interface CopiedCardEntry {
+  count: number;
+  type?: CardType;
+  selectedHiramekiLevel?: number;
+  godHiramekiType?: GodType | null;
+  godHiramekiEffectId?: string | null;
+  isBasicCard?: boolean;
+}
+
+interface ConvertedCardEntry {
+  convertedToId: string;
+  originalType?: CardType;
+  selectedHiramekiLevel?: number;
+  godHiramekiType?: GodType | null;
+  godHiramekiEffectId?: string | null;
+  isBasicCard?: boolean;
 }
 ```
 

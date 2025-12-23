@@ -18,7 +18,7 @@
 
 ## 主要ドメイン仕様（要点）
 - カード種別: `CHARACTER` / `SHARED` / `MONSTER` / `FORBIDDEN`
-- カテゴリ: `ATTACK` / `ENHANCEMENT` / `SKILL`
+- カテゴリ: `ATTACK` / `UPGRADE` / `SKILL`
 - ヒラメキ（カード別のバリエーション）
   - キャラカード: 基本 + Lv1〜Lv5（計6段階）
   - その他: 基本 + Lv1〜Lv3（計4段階）
@@ -26,15 +26,24 @@
 - 神ヒラメキ（5神: `kilken/seclaid/dialos/nihilum/vitol`）
   - ヒラメキ対応カードに追加効果を付与（基本カードは対象外）
   - 効果ごとにコスト修正を持つ場合あり
+  - 効果は統一構造で定義され、gods配列で適用可能な神を指定
   - 今後、神が追加される可能性もあり
 - 曖昧な記憶（Faint Memory）ポイント算出
-  - Shared/Monster/God/Forbidden、削除/コピー回数、変換などが加点要因
+  - 種別: Shared(+20pt), Monster(+80pt), Forbidden(+20pt)
+  - ヒラメキ: Shared/Monster のみ Lv1以上で +10pt（キャラは0pt）
+  - 神ヒラメキ: 全カード +20pt（基本カード除く）
+  - 削除: 回数に応じて 0→10→30→50→70pt（キャラカードは+20pt）
+  - コピー: 回数に応じて 0→10→30→50→70pt
+  - 変換: 基本 +10pt、元カードの属性ポイントは保持
+  - スナップショット方式で削除/コピー/変換時の属性を記録
 
 ## データ構造（実装の基準）
 型は `types/index.ts` に準拠します。特に以下に注意：
 - `DeckCard`: `deckId`, `selectedHiramekiLevel`, `godHiramekiType`, `godHiramekiEffectId` 等を保持
-- `Deck`: `removedCards: Map<string, number>`, `copiedCards: Map<string, number>`
-- 変換管理は現行コードで `convertedCards: Map<string, string>`（originalId → convertedId）を採用
+- `Deck`: `removedCards: Map<string, number | RemovedCardEntry>`, `copiedCards: Map<string, number | CopiedCardEntry>`, `convertedCards: Map<string, string | ConvertedCardEntry>`
+- 変換管理: `convertedCards` は Map で originalId → (convertedId | ConvertedCardEntry) を保存
+- スナップショット型: `RemovedCardEntry`, `CopiedCardEntry`, `ConvertedCardEntry` で削除/コピー/変換時の属性を記録
+- 神ヒラメキ: `GodHiramekiDefinition` は統一構造で、`gods` 配列で適用可能な神を指定
 
 ## ファイル構成（主要）
 - `app/` … Next.js App Router
