@@ -31,26 +31,44 @@ interface SharedDeckPayload {
 const DEFAULT_VERSION = 1;
 
 const encodeText = (value: string): string => {
-  if (typeof Buffer !== "undefined") {
-    return Buffer.from(value, "utf-8").toString("base64");
+  // Try Node.js Buffer first
+  if (typeof Buffer !== "undefined" && Buffer.from) {
+    try {
+      return Buffer.from(value, "utf-8").toString("base64");
+    } catch (e) {
+      // Fall through to TextEncoder method
+    }
   }
-  const utf8 = new TextEncoder().encode(value);
-  let binary = "";
-  utf8.forEach((byte) => {
-    binary += String.fromCharCode(byte);
-  });
-  return btoa(binary);
+  
+  // TextEncoder method for Edge Runtime/Browser
+  const utf8Bytes = new TextEncoder().encode(value);
+  let binaryString = "";
+  for (let i = 0; i < utf8Bytes.length; i++) {
+    binaryString += String.fromCharCode(utf8Bytes[i]);
+  }
+  return btoa(binaryString);
 };
 
 const decodeText = (value: string): string => {
   const normalized = value.replace(/-/g, "+").replace(/_/g, "/");
   const padded = normalized + "=".repeat((4 - (normalized.length % 4 || 4)) % 4);
-  if (typeof Buffer !== "undefined") {
-    return Buffer.from(padded, "base64").toString("utf-8");
+  
+  // Try Node.js Buffer first
+  if (typeof Buffer !== "undefined" && Buffer.from) {
+    try {
+      return Buffer.from(padded, "base64").toString("utf-8");
+    } catch (e) {
+      // Fall through to atob method
+    }
   }
-  const binary = atob(padded);
-  const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
-  return new TextDecoder().decode(bytes);
+  
+  // atob + TextDecoder method for Edge Runtime/Browser
+  const binaryString = atob(padded);
+  const bytes = new Uint8Array(binaryString.length);
+  for (let i = 0; i < binaryString.length; i++) {
+    bytes[i] = binaryString.charCodeAt(i);
+  }
+  return new TextDecoder("utf-8").decode(bytes);
 };
 
 const toBase64Url = (value: string): string =>
