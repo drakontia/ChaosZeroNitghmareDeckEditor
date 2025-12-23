@@ -536,15 +536,21 @@ describe('calculateFaintMemory (snapshot attribute handling)', () => {
       {
         id: 'monster_01',
         deckId: 'monster_01_001',
-        name: { ja: 'モンスター1' },
+        name: 'モンスター1',
         type: CardType.MONSTER,
         category: CardCategory.ATTACK,
-        description: { ja: 'モンスター説明' },
-        cost: 5,
+        statuses: [],
         selectedHiramekiLevel: 2,
         godHiramekiType: null,
         godHiramekiEffectId: null,
-        isBasicCard: false
+        isBasicCard: false,
+        hiramekiVariations: [
+          {
+            level: 0,
+            cost: 5,
+            description: 'モンスター説明'
+          }
+        ]
       }
     ];
 
@@ -552,7 +558,7 @@ describe('calculateFaintMemory (snapshot attribute handling)', () => {
       convertedToId: 'monster_01',
       originalType: CardType.SHARED,
       selectedHiramekiLevel: 1,
-      godHiramekiType: 'kilken',
+      godHiramekiType: GodType.KILKEN,
       godHiramekiEffectId: 'kilken_01',
       isBasicCard: false
     });
