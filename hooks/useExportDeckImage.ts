@@ -47,8 +47,16 @@ export function useExportDeckImage() {
           pixelRatio,
         });
 
+        const now = new Date();
+        const pad = (n: number) => n.toString().padStart(2, "0");
+        const y = now.getFullYear().toString().slice(-2);
+        const M = pad(now.getMonth() + 1);
+        const d = pad(now.getDate());
+        const h = pad(now.getHours());
+        const m = pad(now.getMinutes());
+        const fileName = `${deckName || "czndeck"}_${y}${M}${d}${h}${m}.png`;
         const link = document.createElement("a");
-        link.download = `${deckName || "deck"}.png`;
+        link.download = fileName;
         link.href = dataUrl;
         link.click();
       } catch (err) {
